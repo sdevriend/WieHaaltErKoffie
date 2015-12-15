@@ -1,0 +1,8 @@
+﻿INSERT INTO Gebruiker (naam) VALUES ('Sebastiaan');
+INSERT INTO Gebruiker (naam) VALUES ('Jesse');
+INSERT INTO Gebruiker (naam) VALUES ('Dwin');
+INSERT INTO Gebruiker (naam) VALUES ('Jolanda');
+INSERT INTO Gebruiker (naam) VALUES ('Jeroen');
+INSERT INTO Prijzenlijst (product, prijs) VALUES ('Koffie', '1,01');
+INSERT INTO Prijzenlijst (product, prijs) VALUES ('Thee', '0,89');
+INSERT INTO Prijzenlijst (product, prijs) VALUES ('Cappuccino', '1,39');
