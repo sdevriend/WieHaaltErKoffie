@@ -29,8 +29,17 @@ class TestFrame(wx.Frame):
         #print self.textbox.GetValue()
         self.namebox = wx.TextCtrl(self.panel,pos=(100,480),size=(300,-1),style=wx.TE_PROCESS_ENTER)
         self.namebox.SetValue(' '.join(map(str, self.names)))
+        #self.typebox = wx.Te
         self.Bind(wx.EVT_TEXT_ENTER, self.on_text_enter, self.namebox)
         self.Bind(wx.EVT_TEXT_ENTER, self.on_text_enter, self.textbox)
+        self.radio1 = wx.RadioButton(self.panel, -1, " Radio 1 ",style = wx.RB_GROUP)
+        self.radio2 = wx.RadioButton(self.panel, -1," Radio 2 ",style = wx.RB_GROUP)
+        self.radio3 = wx.RadioButton(self.panel, -1," Radio 3",style = wx.RB_GROUP)
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(self.radio1, 0, wx.ALL, 5)
+        sizer.Add(self.radio2, 0, wx.ALL, 5)
+        sizer.Add(self.radio3, 0, wx.ALL, 5)
+        self.panel.SetSizer(sizer)
         button=wx.Button(self.panel,label="Draw",pos=(10,430))
         self.Bind(wx.EVT_BUTTON, self.on_draw_button, button)
         self.dpi = 100
