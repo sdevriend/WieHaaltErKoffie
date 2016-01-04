@@ -17,7 +17,7 @@ class Creation():
     def getData(self):
         return self.data
     def setData(self, newdata):
-        self.data = self.newdata
+        self.data = newdata
     def getChartType(self):
         return self.chart_type
     def setChartType(self, newcharttype):

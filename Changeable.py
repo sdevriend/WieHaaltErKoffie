@@ -42,7 +42,9 @@ class Stats(wx.Frame):
         wx.StaticBitmap(self.panel, wx.ID_ANY, wx.Bitmap("temp.png"))
     def onChange(self, event):
         graphtype = self.radio_box_1.GetString(self.radio_box_1.GetSelection())
+        
         if graphtype == "Circle":
+            
             self.circle.build()
         elif graphtype == "Bar":
             self.bar.build()
