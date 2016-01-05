@@ -15,6 +15,10 @@ CREATE TABLE Bestelling (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, Bestelli
 						 FOREIGN KEY(ProductID) REFERENCES Prijzenlijst(ID));
 						 
 						 
-INSERT INTO Prijzenlijst (product, prijs) VALUES ('Koffie', '1,02'), ('Thee', '0,75'), 
-												 ('Cappuccino', '1,32'), ('Fris', '10,00'),
-												 ('Bier', '1,63'), ('Wijn', '1,83');
+
+INSERT INTO Prijzenlijst (Product, Prijs) VALUES ('Koffie', '1.02');
+INSERT INTO Prijzenlijst (Product, Prijs) VALUES ('Thee', '0.75'); 
+INSERT INTO Prijzenlijst (Product, Prijs) VALUES ('Cappuccino', '1.32'); 
+INSERT INTO Prijzenlijst (Product, Prijs) VALUES ('Fris', '10.00'); 
+INSERT INTO Prijzenlijst (Product, Prijs) VALUES ('Bier', '1.63'); 
+INSERT INTO Prijzenlijst (Product, Prijs) VALUES ('Wijn', '1.83');

@@ -18,6 +18,11 @@ users = a.getUsers()
 print users
 print "--------------"
 print "Prijzenlijst:"
-a.getPrijzenlijst()
+prijzen = a.getPrijzenlijst()
+print prijzen
+prijzen[0][2] = 5.65
+a.setPrijzenlijst(prijzen)
+prijzen = a.getPrijzenlijst()
+print prijzen
 print "Sluit daarna de db"
 a.close()

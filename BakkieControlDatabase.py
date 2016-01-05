@@ -6,6 +6,7 @@ gezet om alles eenvoudig te beheren.
 
 Sebastiaan de Vriend 15-12-2015 Aanmaken script.
 Sebastiaan de Vriend 04-01-2016 Documentatie en toevoegen features.
+Sebastiaan de Vriend 05-01-2016 Features en documentatie.
 """
 import os
 import sqlite3
@@ -14,6 +15,31 @@ from time import time
 
 
 class BakkieControlDatabase():
+    """
+    Class documentatie voor BakkieControlDatabase.
+    Het is aan te roepen door deze module te importeren.
+    Voorbeeld:
+        db = BakkieControlDatabase()
+        Zie documentatie init voor juiste opties.
+    Handige modules:
+    
+        db.close()
+        ALTIJD GEBRUIKEN ALS HET SCHERM WORDT AFGESLOTEN!
+        
+        db.getUsers()
+        Lijst met gebruikers en daarbij hun id's.
+        [(ID, Naam)]
+        
+        db.addUser(username)
+        Voor het toevoegen van een nieuwe gebruiker.
+        
+        db.deleteUser(username)
+        Voor het verwijderen van een bestaande gebruiker.
+        
+        db.getPrijzenlijst()
+        Het verkrijgen van de producten en de behorende prijzen.
+        [[ID, Naam, Prijs]]
+    """
     def __init__(self, check=False, testdata=False):
         """
         Input:
@@ -143,7 +169,21 @@ class BakkieControlDatabase():
         self.__writelog(bericht)
     
     def getPrijzenlijst(self):
+        """
+        De functie haalt alles op uit de prijzenlijst tabel en zet
+        alle rows om in tuples en plaatst deze in een lijst die
+        vervolgens terug gegeven wordt.
+        """
         self.cursor.execute('SELECT * FROM Prijzenlijst')
         rows = self.cursor.fetchall()
+        prijzenlijst = []
         for row in rows:
-            print row
+            prijzenlijst.append([row[0], str(row[1]), float(row[2])])
+        return prijzenlijst
+    
+    def setPrijzenlijst(self, newPrijs):
+        oudPrijs = self.getPrijzenlijst()
+        for nPrijs, oudPrijs in zip(newPrijs, oudPrijs):
+            if nPrijs != oudPrijs:
+                self.cursor.execute('UPDATE Prijzenlijst SET Prijs = ? WHERE ID = ?;', (nPrijs[2], nPrijs[0],))
+                self.connection.commit()
