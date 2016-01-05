@@ -26,6 +26,7 @@ class Creation():
     def setTitle(self, newtitle):
         self.title = newtitle
     def buildPie(self):
+        
         fig, ax = plt.subplots()
         ax.clear()
         fracs  = []
@@ -37,13 +38,14 @@ class Creation():
             autotext.set_color('white')
         plt.title(self.title, bbox={'facecolor':'0.8', 'pad':5})
         plt.savefig("temp.png")
-        
+        plt.close(fig)
                                   
     def buildBar(self):
         width = 0.35
-      
+        
         x = np.arange(len(self.data))
         fig, ax = plt.subplots()
+        ax.clear()
         #for x in range(len(self.names)):
         #    rects1 = ax.bar(x, self.data, width, color='r',)
 
@@ -58,13 +60,14 @@ class Creation():
         ax.set_xticklabels(self.names)
         ax.set_xlim(-width, len(self.data)+width)
         ax.set_ylim(0,(max(self.data)+3))
-        ax.set_ylabel('title')
-        ax.set_xlabel(self.title)
+        ax.set_ylabel("Aantal keer")
+        ax.set_xlabel("Persoon")
         xTickMarks = self.names
         xtickNames = ax.set_xticklabels(xTickMarks)
         plt.setp(xtickNames, rotation =45, fontsize=10)
-        
+        plt.title(self.title)
         plt.savefig("temp.png")
+        plt.close(fig)
     def autolabel(self, rects, ax):
         # attach some text labels
         for rect in rects:
