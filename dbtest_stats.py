@@ -39,7 +39,8 @@ class Stats(wx.Frame):
         names = self.getNames()
         self.list_box_3 = wx.ListBox(self, wx.ID_ANY, choices=names,
                                                                  style=wx.LB_MULTIPLE)
-        self.list_box_2 = wx.ListBox(self, wx.ID_ANY, choices=[_("Wie haalt het vaakst?"), _("Homo"), _("Wie lijkt het meest op Dwin"), _("Wie is Kees-Jan")])
+        self.list_box_2 = wx.ListBox(self, wx.ID_ANY, choices=[_("Wie haalt het vaakst?"), _("Wie is de grootste wanbetaler?"),
+                                                               _("Wie lijkt het meest op Dwin"), _("Wie is Kees-Jan")])
         self.radio_box_1.Bind(wx.EVT_RADIOBOX, self.onChange)
         self.list_box_2.Bind(wx.EVT_LISTBOX, self.onUpdateData)
         self.list_box_3.Bind(wx.EVT_LISTBOX, self.onUpdateNames)
@@ -88,11 +89,11 @@ class Stats(wx.Frame):
     def onUpdateData(self, event):
         
         stat = self.list_box_2.GetSelection()
-        
+        names = self.graph.getNames()
         #print stat
         if stat == 0:
             freqs = self.db.getUserFreqs()
-            names = self.graph.getNames()
+            
             data_names = []
             data_nums= []
             newdata = []
@@ -112,7 +113,20 @@ class Stats(wx.Frame):
                     
                 
         elif stat == 1:
-            newdata = [6,5,4,3,2,1]
+            debt = self.db.getUserSchulden()
+            print debt
+            data_names = []
+            data_nums = []
+            newdata = []
+            for tup in debt:
+                data_names.append(tup[0])
+                data_nums.append(tup[1])
+            for name in names:
+                if name in data_names:
+                    namenum = data_names.index(name)
+                    newdata.append(data_nums[namenum])
+                else:
+                    newdata.append(0)
         elif stat == 2:
             newdata = [12,10,8,6,13,1]
         elif stat == 3:
