@@ -39,6 +39,11 @@ class BakkieControlDatabase():
         db.getPrijzenlijst()
         Het verkrijgen van de producten en de behorende prijzen.
         [[ID, Naam, Prijs]]
+        
+        db.setPrijzenlijst(lijst)
+        Methode om de prijzenlijst te updaten. Geeft hierbij de
+        prijzenlijst van getPrijzenlijst me daarin de nieuwe
+        bedragen.
     """
     def __init__(self, check=False, testdata=False):
         """
@@ -69,6 +74,8 @@ class BakkieControlDatabase():
         """
         self.connection = sqlite3.connect(self.db_filename)
         self.cursor = self.connection.cursor()
+        self.cursor.execute('pragma foreign_keys=ON')
+        self.connection.commit()
         
         
     def startup(self):
@@ -87,6 +94,8 @@ class BakkieControlDatabase():
             cursor = conn.cursor()
             sqlfile = open("Bakkie.txt")
             sql = sqlfile.read()
+            cursor.execute('pragma foreign_keys=ON')
+            conn.commit()
             cursor.executescript(sql)
             sqlfile.close()
             conn.commit()
@@ -137,11 +146,23 @@ class BakkieControlDatabase():
         Het script voegd de nieuwe gebruiker toe aan de database en
         commit de transactie. Daarna wordt de username in een bericht
         geplaatst en deze wordt doorgestuurd naar de writelog functie.
+        Als de user is aangemaakt, dan wordt er voor de user en de
+        andere users een record toegevoegd aan de schulden tabel. Dit
+        zorgt ervoor dat er altijd een 0 waarde beschikbaar is, en er
+        hoeft niet gekeken worden of er een schuldenpaar aanwezig is...
         """
         self.cursor.execute('INSERT INTO Gebruiker (naam) VALUES(?)', (username,))
         self.connection.commit()
         bericht = "Gebruiker " + username + " is aangemaakt."
         self.__writelog(bericht)
+        self.cursor.execute('SELECT ID FROM Gebruiker WHERE Naam = ? ;', (username,))
+        gebruikerid = self.cursor.fetchall()[0][0]
+        self.cursor.execute('SELECT ID FROM Gebruiker WHERE Naam != ? ;', (username,))
+        gebruikers = self.cursor.fetchall()
+        for user in gebruikers:
+            self.cursor.execute('INSERT INTO Schulden (SchuldeiserID, SchuldmakerID, Bedrag) VALUES (?, ?, 0);', (gebruikerid, user[0],))
+            self.cursor.execute('INSERT INTO Schulden (SchuldeiserID, SchuldmakerID, Bedrag) VALUES (?, ?, 0);', (user[0], gebruikerid,))
+            self.connection.commit()
         
     def __writelog(self, bericht):
         """
@@ -182,8 +203,51 @@ class BakkieControlDatabase():
         return prijzenlijst
     
     def setPrijzenlijst(self, newPrijs):
+        """
+        Input: 1
+            newPrijs: Lijst: De nieuwe prijzenlijst.
+        De functie haalt een kopielijst op van de prijzenlijst en
+        loopt vervolgens door beide lijsten heen. Als er een
+        verandering is, dan zijn de lijsten niet gelijk en wordt
+        de prijzenlijst tabel geupdate met de nieuwe waarde.
+        Vervolgens wordt er een bericht gemaakt en deze wordt
+        doorgestuurd naar de logfunctie.
+        """
         oudPrijs = self.getPrijzenlijst()
         for nPrijs, oudPrijs in zip(newPrijs, oudPrijs):
             if nPrijs != oudPrijs:
                 self.cursor.execute('UPDATE Prijzenlijst SET Prijs = ? WHERE ID = ?;', (nPrijs[2], nPrijs[0],))
                 self.connection.commit()
+                bericht = "De prijs voor " + nPrijs[1] + " is veranderd van: " + str(oudPrijs[2]) + " naar: " + str(nPrijs[2])
+                self.__writelog(bericht)
+    def setBestelling(self, HaalID, Bestellingen):
+        """
+        Input: 2
+            HaalID: Int: ID van de persoon die drankjes gaat halen.
+            Bestellingen: Lijst met de volgende invoer.
+            [[PersoonID, ProductID], [PersoonID, ProductID]]
+        De functie haalt de namen van gebruikers en producten op en
+        loopt door bestellingen. Bij elke bestelling wordt de juiste
+        naam en de bestelling opgehaald. Daarvanuit worden er twee
+        tabellen bijgewerkt. Als eerste wordt er een schuld toegevoegd
+        bij de juiste gebruiker. En als tweede wordt er een bestelling
+        toegevoegd aan de database. Daarna wordt er een bericht geschreven
+        waarin staat wie er gehaald heeft en wat er precies gehaald is.
+        Dit wordt doorgestuurd naar de logfunctie.
+        """
+        self.cursor.execute('SELECT Naam FROM Gebruiker WHERE ID = ?;', (str(HaalID)))
+        haalNaam = self.cursor.fetchall()[0][0]
+        for bestelling in Bestellingen:
+            self.cursor.execute('SELECT Product, Prijs FROM Prijzenlijst WHERE ID = ?;', (str(bestelling[1])))
+            producten = self.cursor.fetchall()[0]
+            self.cursor.execute('SELECT Naam FROM Gebruiker WHERE ID = ?;', (str(bestelling[0])))
+            bestelnaam = self.cursor.fetchall()[0][0]
+            bericht = haalNaam + " heeft voor " + bestelnaam + " " + str(producten[0]) + " gehaald voor: " + str(producten[1]) + "."
+            self.cursor.execute('UPDATE Schulden SET Bedrag=(Bedrag + ?) WHERE SchuldeiserID = ? AND SchuldmakerID = ?;', 
+            (producten[1], str(HaalID), str(bestelling[0]), ))
+            self.cursor.execute('INSERT INTO Bestelling (GehaaldID, VoorID, ProductID) VALUES (?, ?, ?);', (str(HaalID), str(bestelling[0]), str(bestelling[1]),))
+            self.connection.commit()
+            self.__writelog(bericht)
+        
+        
+        # Bestelling komt binnen.
