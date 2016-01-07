@@ -116,12 +116,16 @@ class Schermpje(wx.Frame):
     def bewerken(self, event):
         self.prijzenlijstpaneel.txtCtrlKoffie.SetEditable(True)
         self.prijzenlijstpaneel.txtCtrlThee.SetEditable(True)
+        self.prijzenlijstpaneel.txtCtrlCapp.SetEditable(True)
+        self.prijzenlijstpaneel.txtCtrlFris.SetEditable(True)
         self.prijzenlijstpaneel.txtCtrlBier.SetEditable(True)
         self.prijzenlijstpaneel.txtCtrlWijn.SetEditable(True)
 
     def opslaan(self, event):
         self.prijzenlijstpaneel.txtCtrlKoffie.SetEditable(False)
         self.prijzenlijstpaneel.txtCtrlThee.SetEditable(False)
+        self.prijzenlijstpaneel.txtCtrlCapp.SetEditable(False)
+        self.prijzenlijstpaneel.txtCtrlFris.SetEditable(False)
         self.prijzenlijstpaneel.txtCtrlBier.SetEditable(False)
         self.prijzenlijstpaneel.txtCtrlWijn.SetEditable(False)
 
