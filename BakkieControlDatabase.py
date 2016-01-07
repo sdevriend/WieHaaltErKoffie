@@ -44,6 +44,12 @@ class BakkieControlDatabase():
         Methode om de prijzenlijst te updaten. Geeft hierbij de
         prijzenlijst van getPrijzenlijst me daarin de nieuwe
         bedragen.
+        
+        db.setBestelling(id, lijst)
+        Hier kan je de bestelling naartoe sturen in het volgende formaat.
+        id: gebruiker die koffie gaat halen.
+        lijst: lijst met bestellingen. Elke bestelling ziet er als volgt uit:
+        [userid, productid]
     """
     def __init__(self, check=False, testdata=False):
         """
@@ -274,7 +280,7 @@ class BakkieControlDatabase():
         datalijst = []
         freqs = []
         for data in self.cursor.fetchall():
-            freqs.append([str(data[0]), float(data[1])])
+            freqs.append([str(data[0]), round(float(data[1]), 2)])
         return freqs
        
     def getOpenstaand(self):
