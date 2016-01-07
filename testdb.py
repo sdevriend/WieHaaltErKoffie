@@ -33,4 +33,6 @@ print "Sluit daarna de db"
 #print a.cursor.fetchall()
 a.getFrequenties()
 a.getUserFreqs()
+a.getUserSchulden()
+a.getOpenstaand()
 a.close()

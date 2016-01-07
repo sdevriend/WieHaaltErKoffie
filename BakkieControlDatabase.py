@@ -251,18 +251,36 @@ class BakkieControlDatabase():
         
         
     def getFrequenties(self):
-       """
-       Functie queried de database en geeft een lijst terug.
-       """
-       self.cursor.execute('SELECT Prijzenlijst.Product, COUNT(Bestelling.ProductID) FROM Bestelling, Prijzenlijst WHERE Prijzenlijst.ID = Bestelling.ProductID GROUP BY ProductID;')
-       freqs = []
-       for data in self.cursor.fetchall():
-           freqs.append([str(data[0]), data[1]])
-       return freqs
+        """
+        Functie queried de database en geeft een lijst terug.
+        """
+        self.cursor.execute('SELECT Prijzenlijst.Product, COUNT(Bestelling.ProductID) FROM Bestelling, Prijzenlijst WHERE Prijzenlijst.ID = Bestelling.ProductID GROUP BY ProductID;')
+        freqs = []
+        for data in self.cursor.fetchall():
+            freqs.append([str(data[0]), data[1]])
+        return freqs
     
     def getUserFreqs(self):
-       self.cursor.execute('SELECT Gebruiker.Naam, COUNT( Bestelling.GehaaldID ) FROM Gebruiker, Bestelling WHERE Gebruiker.ID = Bestelling.GehaaldID GROUP BY Gebruiker.Naam;')
-       freqs = []
-       for data in self.cursor.fetchall():
-           freqs.append([str(data[0]), data[1]])
-       return freqs
+        """Query voor Jesse"""
+        self.cursor.execute('SELECT Gebruiker.Naam, COUNT( Bestelling.GehaaldID ) FROM Gebruiker, Bestelling WHERE Gebruiker.ID = Bestelling.GehaaldID GROUP BY Gebruiker.Naam;')
+        freqs = []
+        for data in self.cursor.fetchall():
+            freqs.append([str(data[0]), data[1]])
+        return freqs
+    
+    def getUserSchulden(self):
+        """Query voor Jesse"""
+        self.cursor.execute('SELECT Gebruiker.Naam, sum(Schulden.Bedrag) FROM Gebruiker, Schulden WHERE Gebruiker.ID = Schulden.SchuldmakerID GROUP BY Gebruiker.Naam;')
+        datalijst = []
+        freqs = []
+        for data in self.cursor.fetchall():
+            freqs.append([str(data[0]), float(data[1])])
+        return freqs
+       
+    def getOpenstaand(self):
+        """Query voor Jesse"""
+        self.cursor.execute('SELECT Gebruiker.Naam, SUM(Schulden.Bedrag) FROM Gebruiker, Schulden WHERE Gebruiker.ID = Schulden.SchuldeiserID GROUP BY Gebruiker.Naam;')
+        freqs = []
+        for data in self.cursor.fetchall():
+            freqs.append([str(data[0]), round(float(data[1]), 2)])
+        return freqs
