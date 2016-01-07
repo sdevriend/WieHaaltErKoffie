@@ -250,4 +250,12 @@ class BakkieControlDatabase():
             self.__writelog(bericht)
         
         
-        # Bestelling komt binnen.
+    def getFrequenties(self):
+       """
+       Functie queried de database en geeft een lijst terug.
+       """
+       self.cursor.execute('SELECT Prijzenlijst.Product, COUNT(Bestelling.ProductID) FROM Bestelling, Prijzenlijst WHERE Prijzenlijst.ID = Bestelling.ProductID GROUP BY ProductID;')
+       freqs = []
+       for data in self.cursor.fetchall():
+           freqs.append([str(data[0]), data[1]])
+       return freqs
