@@ -259,3 +259,10 @@ class BakkieControlDatabase():
        for data in self.cursor.fetchall():
            freqs.append([str(data[0]), data[1]])
        return freqs
+    
+    def getUserFreqs(self):
+       self.cursor.execute('SELECT Gebruiker.Naam, COUNT( Bestelling.GehaaldID ) FROM Gebruiker, Bestelling WHERE Gebruiker.ID = Bestelling.GehaaldID GROUP BY Gebruiker.Naam;')
+       freqs = []
+       for data in self.cursor.fetchall():
+           freqs.append([str(data[0]), data[1]])
+       return freqs

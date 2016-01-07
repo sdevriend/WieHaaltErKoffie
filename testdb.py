@@ -32,4 +32,5 @@ print "Sluit daarna de db"
 #a.cursor.execute('SELECT Prijzenlijst.Product, COUNT(Bestelling.ProductID) FROM Bestelling, Prijzenlijst WHERE Prijzenlijst.ID = Bestelling.ProductID GROUP BY ProductID;')
 #print a.cursor.fetchall()
 a.getFrequenties()
+a.getUserFreqs()
 a.close()
