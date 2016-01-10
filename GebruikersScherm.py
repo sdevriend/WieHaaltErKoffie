@@ -7,9 +7,10 @@ import wx
 
 
 class Gebruikersscherm(wx.Panel):
-    def __init__(self, parent):
+    def __init__(self, parent, users):
         """ 
         """
+        self.users = users
         wx.Panel.__init__(self, parent)
         titelpaneel = wx.Panel(self)
         self.teksten(titelpaneel)
@@ -53,7 +54,7 @@ class Gebruikersscherm(wx.Panel):
         self.LCGebruikers.Arrange()
 
         index = 1
-        for item in Gebruikers:
+        for item in self.users:
             self.LCGebruikers.InsertStringItem(index, item[1])
             index += 1
 
