@@ -14,6 +14,7 @@ from datetime import datetime
 from time import time
 
 
+
 class BakkieControlDatabase():
     """
     Class documentatie voor BakkieControlDatabase.
@@ -123,7 +124,7 @@ class BakkieControlDatabase():
         if not db_exist:
             conn = sqlite3.connect(self.db_filename)
             cursor = conn.cursor()
-            sqlfile = open("Bakkie.txt")
+            sqlfile = open("BakkieControlDatabaseSQL.txt")
             sql = sqlfile.read()
             cursor.execute('pragma foreign_keys=ON')
             conn.commit()
