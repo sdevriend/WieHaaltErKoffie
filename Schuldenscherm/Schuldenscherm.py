@@ -4,7 +4,7 @@ Jolanda Essens              Bin3a               s1082795
 Dit programma is op 03-01-2016 geschreven.
 Op 12-6-2014 is deze klasse gedocumenteerd.
 
-Eerst wordt wx geimporteerd
+Eerst wordt wx geimporteerd 
 """
 import wx
 
