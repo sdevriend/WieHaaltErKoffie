@@ -10,8 +10,8 @@ Sebastiaan de Vriend 05-01-2016 Features en documentatie.
 """
 import os
 import sqlite3
-from datetime import datetime
-from time import time
+import datetime
+import time
 
 
 
@@ -76,6 +76,19 @@ class BakkieControlDatabase():
         [EiserID, EiserNaam, MakerID, MakerNaam, Bedrag],
         [EiserID, EiserNaam, MakerID, MakerNaam, Bedrag]
         ]
+        
+        db.setSchulden(SchuldEiserID, SchuldmakerID)
+        Voor het resetten van een schuld tussen schuldeiser en
+        schuldmaker. Het bedrag komt hiermee op 0 euro.
+        
+        db.getLog()
+        Voor het ophalen van het logfile. De functie geeft twee
+        lijsten terug. De eerste lijst bevat de namen van de dagen
+        die voorkomen in het log. De 2e lijst is het log zelf.
+        Voor elke dag is een apparte lijst gemaakt met daarin een
+        lijst voor elke log gebeurtenis met datum.
+        log = [ #DAG [ [datum, bericht], [datum, bericht] ],
+                #DAG [ [datum, bericht], [datum, bericht] ]]
     """
     def __init__(self, check=False, testdata=False):
         """
@@ -205,7 +218,7 @@ class BakkieControlDatabase():
         De functie maakt een epoch timestamp en haalt de miliseconde af
         en plaatst deze met het bericht in de log database.
         """
-        tijd = int(time())
+        tijd = int(time.time())
         self.cursor.execute('INSERT INTO Log (Datum, Bericht) VALUES(?, ?)', (tijd, bericht, ))
         self.connection.commit()
     
@@ -340,7 +353,7 @@ class BakkieControlDatabase():
             schuldenlijst.append([row[0], str(row[1]), row[2], str(row[3]), round(float(row[4]), 2)])
         return schuldenlijst
     
-    def setSchulden(self,EiserID, MakerID):
+    def setSchulden(self, EiserID, MakerID):
         """
         Input: 2
         EiserID: ID van de schuldeneiser.
@@ -358,3 +371,47 @@ class BakkieControlDatabase():
         self.connection.commit()
         bericht = MakerNaam + " lost de schulden in bij " + EiserNaam + "."
         self.__writelog(bericht)
+    
+    def getLog(self):
+        """
+        Functie maakt de tijd van nu aan, dat een string is, en een timestamp van nu.
+        Daarna wordt een timestamp van precies 00:00 gemaakt van vandaag en wordt
+        end aan de timestamp van nu gekoppeld en begin aan 00:00. Hiermee
+        kunnen tijden uit de database gehaald worden per dag.
+        Daarnaast worden de lijsten daynames voor de dagnamen en log gemaakt.
+        In de loop worden alle logberichten per dag opgehaald. Als er
+        logberichten zijn, dan wordt de dagnaam van de bijbehorende
+        dag erbij geplaktin daynames en wordt er geloopt door de logberichten.
+        en wordt de timestamp omgezet naar leesbaar en het logbericht
+        toegevoegd als lijst. Aan het einde wordt de dag toegevoegd aan
+        het logboek. 
+        Daarna wordt end het begin van de dag en wordt begin de vorige dag.
+        aan het einde wordt daynames en log terug gegeven.
+        
+        day = [dagnaam, dagnaam, dagnaam]
+        log = [
+        [ Dit is 1 dag[datum, bericht], [datum,bericht]],
+        [ Dit is 1 dag[datum, bericht], [datum,bericht]]
+        ]
+        """
+        today = datetime.date.today()
+        now = time.time()
+        prevDay = time.mktime(datetime.datetime.strptime(str(today), "%Y-%m-%d").timetuple())
+        end = now
+        begin = prevDay
+        daynames = []
+        log = []
+        for x in range(1, 8):
+            self.cursor.execute('SELECT Datum, Bericht FROM Log WHERE Datum > ? AND Datum < ?;', (begin, end, ))
+            rows = self.cursor.fetchall()
+            if len(rows) > 0:
+                daynames.append(datetime.datetime.fromtimestamp(begin).strftime('%A'))
+                daglog = []
+                for row in rows:
+                    rowtimestamp = datetime.datetime.fromtimestamp(row[0]).strftime('%Y-%m-%d %H:%M:%S')
+                    rowbericht = str(row[1])
+                    daglog.append([rowtimestamp, rowbericht])
+                log.append(daglog)
+            end = begin
+            begin = begin - 86400 
+        return daynames, log

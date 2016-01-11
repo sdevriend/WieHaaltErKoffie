@@ -36,7 +36,10 @@ a.getUserFreqs()
 a.getUserSchulden()
 a.getOpenstaand()
 a.getSchulden()
+a.cursor.execute('INSERT INTO Log (Datum, Bericht) VALUES (1452450531, "JESSE GAAT BIER HALEN");')
+a.cursor.execute('INSERT INTO Log (Datum, Bericht) VALUES (1252350531, "Deze mag niet getoont worden!");')
 print "Sebsatiaan 'lost' de schulden in bij Jesse."
 a.setSchulden(2, 1)
 print "Sluit daarna de db"
+a.getLog()
 a.close()
