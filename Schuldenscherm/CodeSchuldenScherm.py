@@ -22,7 +22,7 @@ class SchuldenSchermCode(wx.Frame):
         self.panelhide(self.paneel1, (750, 600))
         self.paneel.SetSizer(self.boxje)
         self.Centre()
-        self.Show(True)
+        self.Show(True) 
            
     def panelhide(self, zie, bh):
         self.paneel1.Hide()
