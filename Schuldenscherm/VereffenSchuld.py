@@ -8,7 +8,7 @@ class VereffenScherm(wx.Panel):
         De volgende methodes worden aangeroepen:
 
         self.button()
-        self.start()
+        self.start() 
 
         Als laatste zet deze methode de SetSizer naar self.box.
         """
