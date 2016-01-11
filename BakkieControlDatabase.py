@@ -18,6 +18,16 @@ class BakkieControlDatabase():
     """
     Class documentatie voor BakkieControlDatabase.
     Het is aan te roepen door deze module te importeren.
+    Voor een nieuwe database verwijder je eerst de oude
+    Bakke.db en roepen
+    je de module aan met check=True.
+    Voor testdata gebruik je testdata=True.
+    
+    Voor een "Gebruikte" database kan je testdb.py runnen.
+    Dit script handeld een aantal standaard procedures uit
+    zoals het toevoegen en verwijderen van een gebruiker,
+    het halen van een bestelling en het aanpassen van de prijzenlijst.
+    
     Voorbeeld:
         db = BakkieControlDatabase()
         Zie documentatie init voor juiste opties.
@@ -50,6 +60,21 @@ class BakkieControlDatabase():
         id: gebruiker die koffie gaat halen.
         lijst: lijst met bestellingen. Elke bestelling ziet er als volgt uit:
         [userid, productid]
+        
+        queries voor Jesse:
+        db.getFrequenties()
+        db.getUserFreqs()
+        db.getUserSchulden()
+        db.getOpenstaand()
+        
+        
+        Voor het ophalen van de schuldenlijst met daarbij namen en bedragen
+        gebruik je het volgende:
+        db.getSchulden(). Dit geeft de volgende lijst terug:
+        [
+        [EiserID, EiserNaam, MakerID, MakerNaam, Bedrag],
+        [EiserID, EiserNaam, MakerID, MakerNaam, Bedrag]
+        ]
     """
     def __init__(self, check=False, testdata=False):
         """
@@ -116,7 +141,9 @@ class BakkieControlDatabase():
 
     def getUsers(self):
         """
-        De functie haalt alle gebruikers op en plaatst deze 
+        De functie haalt alle gebruikers op en plaatst deze in
+        een lijst. Hoeft niet echt met lambda gesorteerd te worden,
+        maar werkt wel.
         """
         self.cursor.execute('SELECT * FROM Gebruiker')
         rows = self.cursor.fetchall()
@@ -166,8 +193,8 @@ class BakkieControlDatabase():
         self.cursor.execute('SELECT ID FROM Gebruiker WHERE Naam != ? ;', (username,))
         gebruikers = self.cursor.fetchall()
         for user in gebruikers:
-            self.cursor.execute('INSERT INTO Schulden (SchuldeiserID, SchuldmakerID, Bedrag) VALUES (?, ?, 0);', (gebruikerid, user[0],))
-            self.cursor.execute('INSERT INTO Schulden (SchuldeiserID, SchuldmakerID, Bedrag) VALUES (?, ?, 0);', (user[0], gebruikerid,))
+            self.cursor.execute('INSERT INTO Schulden (SchuldeiserID, SchuldmakerID, Bedrag) VALUES (?, ?, 0.00);', (gebruikerid, user[0],))
+            self.cursor.execute('INSERT INTO Schulden (SchuldeiserID, SchuldmakerID, Bedrag) VALUES (?, ?, 0.00);', (user[0], gebruikerid,))
             self.connection.commit()
         
     def __writelog(self, bericht):
@@ -290,3 +317,43 @@ class BakkieControlDatabase():
         for data in self.cursor.fetchall():
             freqs.append([str(data[0]), round(float(data[1]), 2)])
         return freqs
+        
+    def getSchulden(self):
+        """
+        Functie haalt alle schulden op van de database in het
+        volgende formaat:
+        [
+        [EiserID, EiserNaam, MakerID, MakerNaam, Bedrag],
+        [EiserID, EiserNaam, MakerID, MakerNaam, Bedrag]
+        ]
+        """
+        self.cursor.execute("""SELECT Schulden.SchuldeiserID AS Eiser, 
+                               EI.Naam AS EiserNaam, 
+                               Schulden.SchuldmakerID as Maker, 
+                               Mak.Naam AS MakerNaam, Schulden.Bedrag from Schulden, 
+                               Gebruiker AS EI, Gebruiker AS Mak 
+                               WHERE Eiser = EI.ID AND Maker = Mak.ID  
+                               ORDER BY EiserNaam, MakerNaam;""")
+        schuldenlijst = []
+        for row in self.cursor.fetchall():
+            schuldenlijst.append([row[0], str(row[1]), row[2], str(row[3]), round(float(row[4]), 2)])
+        return schuldenlijst
+    
+    def setSchulden(self,EiserID, MakerID):
+        """
+        Input: 2
+        EiserID: ID van de schuldeneiser.
+        MakerID: ID van de schuldenmaker.
+        
+        De functie lost de schulden op tussen de maker en de eiser en
+        maakt een bericht op voor het logbestand.
+        """
+        self.cursor.execute('SELECT Naam FROM Gebruiker WHERE ID = ?;', (str(EiserID)))
+        EiserNaam = self.cursor.fetchall()[0][0]
+        self.cursor.execute('SELECT Naam FROM Gebruiker WHERE ID = ?;', (str(MakerID)))
+        MakerNaam = self.cursor.fetchall()[0][0]
+        
+        self.cursor.execute("UPDATE Schulden SET Bedrag = 0 WHERE SchuldeiserID = ? AND SchuldmakerID = ?;", (str(EiserID), str(MakerID), ))
+        self.connection.commit()
+        bericht = MakerNaam + " lost de schulden in bij " + EiserNaam + "."
+        self.__writelog(bericht)
