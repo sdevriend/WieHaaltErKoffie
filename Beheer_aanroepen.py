@@ -172,7 +172,6 @@ class Schermpje(wx.Frame):
         else:
             prijzenlijst.append((6, "Wijn", float(newWijn)))
 
-        print prijzenlijst
         self.db.setPrijzenlijst(prijzenlijst)
 
     def gebruikersscherm(self, event):
