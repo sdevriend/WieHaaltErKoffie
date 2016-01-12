@@ -70,7 +70,7 @@ class In_dr_ha_1_scherm(wx.Panel):
         totalebox.Add((wx.Panel(self, -1)), 1, wx.EXPAND | wx.ALL)
         totalebox.Add(namenbox, 15, wx.EXPAND | wx.ALL)
         totalebox.Add(rechterbox, 15, wx.EXPAND | wx.ALL)
-        print(knoppenlijst)
+        #print(knoppenlijst)
         
         return totalebox
 
