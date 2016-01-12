@@ -353,11 +353,12 @@ class BakkieControlDatabase():
             schuldenlijst.append([row[0], str(row[1]), row[2], str(row[3]), round(float(row[4]), 2)])
         return schuldenlijst
     
-    def setSchulden(self, EiserID, MakerID):
+    def setSchulden(self, EiserID, MakerID, bedrag=0.0):
         """
         Input: 2
         EiserID: ID van de schuldeneiser.
         MakerID: ID van de schuldenmaker.
+        bedrag: nieuw schuldbedrag.
         
         De functie lost de schulden op tussen de maker en de eiser en
         maakt een bericht op voor het logbestand.
@@ -367,7 +368,7 @@ class BakkieControlDatabase():
         self.cursor.execute('SELECT Naam FROM Gebruiker WHERE ID = ?;', (str(MakerID)))
         MakerNaam = self.cursor.fetchall()[0][0]
         
-        self.cursor.execute("UPDATE Schulden SET Bedrag = 0 WHERE SchuldeiserID = ? AND SchuldmakerID = ?;", (str(EiserID), str(MakerID), ))
+        self.cursor.execute("UPDATE Schulden SET Bedrag = ? WHERE SchuldeiserID = ? AND SchuldmakerID = ?;", (bedrag, str(EiserID), str(MakerID), ))
         self.connection.commit()
         bericht = MakerNaam + " lost de schulden in bij " + EiserNaam + "."
         self.__writelog(bericht)
