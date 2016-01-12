@@ -10,14 +10,25 @@ Sebastiaan de Vriend 05-01-2016 Features en documentatie.
 """
 import os
 import sqlite3
-from datetime import datetime
-from time import time
+import datetime
+import time
+
 
 
 class BakkieControlDatabase():
     """
     Class documentatie voor BakkieControlDatabase.
     Het is aan te roepen door deze module te importeren.
+    Voor een nieuwe database verwijder je eerst de oude
+    Bakke.db en roepen
+    je de module aan met check=True.
+    Voor testdata gebruik je testdata=True.
+    
+    Voor een "Gebruikte" database kan je testdb.py runnen.
+    Dit script handeld een aantal standaard procedures uit
+    zoals het toevoegen en verwijderen van een gebruiker,
+    het halen van een bestelling en het aanpassen van de prijzenlijst.
+    
     Voorbeeld:
         db = BakkieControlDatabase()
         Zie documentatie init voor juiste opties.
@@ -44,6 +55,40 @@ class BakkieControlDatabase():
         Methode om de prijzenlijst te updaten. Geeft hierbij de
         prijzenlijst van getPrijzenlijst me daarin de nieuwe
         bedragen.
+        
+        db.setBestelling(id, lijst)
+        Hier kan je de bestelling naartoe sturen in het volgende formaat.
+        id: gebruiker die koffie gaat halen.
+        lijst: lijst met bestellingen. Elke bestelling ziet er als volgt uit:
+        [userid, productid]
+        
+        queries voor Jesse:
+        db.getFrequenties()
+        db.getUserFreqs()
+        db.getUserSchulden()
+        db.getOpenstaand()
+        
+        
+        Voor het ophalen van de schuldenlijst met daarbij namen en bedragen
+        gebruik je het volgende:
+        db.getSchulden(). Dit geeft de volgende lijst terug:
+        [
+        [EiserID, EiserNaam, MakerID, MakerNaam, Bedrag],
+        [EiserID, EiserNaam, MakerID, MakerNaam, Bedrag]
+        ]
+        
+        db.setSchulden(SchuldEiserID, SchuldmakerID)
+        Voor het resetten van een schuld tussen schuldeiser en
+        schuldmaker. Het bedrag komt hiermee op 0 euro.
+        
+        db.getLog()
+        Voor het ophalen van het logfile. De functie geeft twee
+        lijsten terug. De eerste lijst bevat de namen van de dagen
+        die voorkomen in het log. De 2e lijst is het log zelf.
+        Voor elke dag is een apparte lijst gemaakt met daarin een
+        lijst voor elke log gebeurtenis met datum.
+        log = [ #DAG [ [datum, bericht], [datum, bericht] ],
+                #DAG [ [datum, bericht], [datum, bericht] ]]
     """
     def __init__(self, check=False, testdata=False):
         """
@@ -92,7 +137,7 @@ class BakkieControlDatabase():
         if not db_exist:
             conn = sqlite3.connect(self.db_filename)
             cursor = conn.cursor()
-            sqlfile = open("Bakkie.txt")
+            sqlfile = open("BakkieControlDatabaseSQL.txt")
             sql = sqlfile.read()
             cursor.execute('pragma foreign_keys=ON')
             conn.commit()
@@ -110,7 +155,9 @@ class BakkieControlDatabase():
 
     def getUsers(self):
         """
-        De functie haalt alle gebruikers op en plaatst deze 
+        De functie haalt alle gebruikers op en plaatst deze in
+        een lijst. Hoeft niet echt met lambda gesorteerd te worden,
+        maar werkt wel.
         """
         self.cursor.execute('SELECT * FROM Gebruiker')
         rows = self.cursor.fetchall()
@@ -160,8 +207,8 @@ class BakkieControlDatabase():
         self.cursor.execute('SELECT ID FROM Gebruiker WHERE Naam != ? ;', (username,))
         gebruikers = self.cursor.fetchall()
         for user in gebruikers:
-            self.cursor.execute('INSERT INTO Schulden (SchuldeiserID, SchuldmakerID, Bedrag) VALUES (?, ?, 0);', (gebruikerid, user[0],))
-            self.cursor.execute('INSERT INTO Schulden (SchuldeiserID, SchuldmakerID, Bedrag) VALUES (?, ?, 0);', (user[0], gebruikerid,))
+            self.cursor.execute('INSERT INTO Schulden (SchuldeiserID, SchuldmakerID, Bedrag) VALUES (?, ?, 0.00);', (gebruikerid, user[0],))
+            self.cursor.execute('INSERT INTO Schulden (SchuldeiserID, SchuldmakerID, Bedrag) VALUES (?, ?, 0.00);', (user[0], gebruikerid,))
             self.connection.commit()
         
     def __writelog(self, bericht):
@@ -171,7 +218,7 @@ class BakkieControlDatabase():
         De functie maakt een epoch timestamp en haalt de miliseconde af
         en plaatst deze met het bericht in de log database.
         """
-        tijd = int(time())
+        tijd = int(time.time())
         self.cursor.execute('INSERT INTO Log (Datum, Bericht) VALUES(?, ?)', (tijd, bericht, ))
         self.connection.commit()
     
@@ -274,7 +321,7 @@ class BakkieControlDatabase():
         datalijst = []
         freqs = []
         for data in self.cursor.fetchall():
-            freqs.append([str(data[0]), float(data[1])])
+            freqs.append([str(data[0]), round(float(data[1]), 2)])
         return freqs
        
     def getOpenstaand(self):
@@ -284,3 +331,87 @@ class BakkieControlDatabase():
         for data in self.cursor.fetchall():
             freqs.append([str(data[0]), round(float(data[1]), 2)])
         return freqs
+        
+    def getSchulden(self):
+        """
+        Functie haalt alle schulden op van de database in het
+        volgende formaat:
+        [
+        [EiserID, EiserNaam, MakerID, MakerNaam, Bedrag],
+        [EiserID, EiserNaam, MakerID, MakerNaam, Bedrag]
+        ]
+        """
+        self.cursor.execute("""SELECT Schulden.SchuldeiserID AS Eiser, 
+                               EI.Naam AS EiserNaam, 
+                               Schulden.SchuldmakerID as Maker, 
+                               Mak.Naam AS MakerNaam, Schulden.Bedrag from Schulden, 
+                               Gebruiker AS EI, Gebruiker AS Mak 
+                               WHERE Eiser = EI.ID AND Maker = Mak.ID  
+                               ORDER BY EiserNaam, MakerNaam;""")
+        schuldenlijst = []
+        for row in self.cursor.fetchall():
+            schuldenlijst.append([row[0], str(row[1]), row[2], str(row[3]), round(float(row[4]), 2)])
+        return schuldenlijst
+    
+    def setSchulden(self, EiserID, MakerID):
+        """
+        Input: 2
+        EiserID: ID van de schuldeneiser.
+        MakerID: ID van de schuldenmaker.
+        
+        De functie lost de schulden op tussen de maker en de eiser en
+        maakt een bericht op voor het logbestand.
+        """
+        self.cursor.execute('SELECT Naam FROM Gebruiker WHERE ID = ?;', (str(EiserID)))
+        EiserNaam = self.cursor.fetchall()[0][0]
+        self.cursor.execute('SELECT Naam FROM Gebruiker WHERE ID = ?;', (str(MakerID)))
+        MakerNaam = self.cursor.fetchall()[0][0]
+        
+        self.cursor.execute("UPDATE Schulden SET Bedrag = 0 WHERE SchuldeiserID = ? AND SchuldmakerID = ?;", (str(EiserID), str(MakerID), ))
+        self.connection.commit()
+        bericht = MakerNaam + " lost de schulden in bij " + EiserNaam + "."
+        self.__writelog(bericht)
+    
+    def getLog(self):
+        """
+        Functie maakt de tijd van nu aan, dat een string is, en een timestamp van nu.
+        Daarna wordt een timestamp van precies 00:00 gemaakt van vandaag en wordt
+        end aan de timestamp van nu gekoppeld en begin aan 00:00. Hiermee
+        kunnen tijden uit de database gehaald worden per dag.
+        Daarnaast worden de lijsten daynames voor de dagnamen en log gemaakt.
+        In de loop worden alle logberichten per dag opgehaald. Als er
+        logberichten zijn, dan wordt de dagnaam van de bijbehorende
+        dag erbij geplaktin daynames en wordt er geloopt door de logberichten.
+        en wordt de timestamp omgezet naar leesbaar en het logbericht
+        toegevoegd als lijst. Aan het einde wordt de dag toegevoegd aan
+        het logboek. 
+        Daarna wordt end het begin van de dag en wordt begin de vorige dag.
+        aan het einde wordt daynames en log terug gegeven.
+        
+        day = [dagnaam, dagnaam, dagnaam]
+        log = [
+        [ Dit is 1 dag[datum, bericht], [datum,bericht]],
+        [ Dit is 1 dag[datum, bericht], [datum,bericht]]
+        ]
+        """
+        today = datetime.date.today()
+        now = time.time()
+        prevDay = time.mktime(datetime.datetime.strptime(str(today), "%Y-%m-%d").timetuple())
+        end = now
+        begin = prevDay
+        daynames = []
+        log = []
+        for x in range(1, 8):
+            self.cursor.execute('SELECT Datum, Bericht FROM Log WHERE Datum > ? AND Datum < ?;', (begin, end, ))
+            rows = self.cursor.fetchall()
+            if len(rows) > 0:
+                daynames.append(datetime.datetime.fromtimestamp(begin).strftime('%A'))
+                daglog = []
+                for row in rows:
+                    rowtimestamp = datetime.datetime.fromtimestamp(row[0]).strftime('%Y-%m-%d %H:%M:%S')
+                    rowbericht = str(row[1])
+                    daglog.append([rowtimestamp, rowbericht])
+                log.append(daglog)
+            end = begin
+            begin = begin - 86400 
+        return daynames, log

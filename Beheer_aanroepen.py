@@ -37,11 +37,12 @@ class Schermpje(wx.Frame):
         """
         self.db = BakkieControlDatabase()
         prijzen = self.db.getPrijzenlijst()
+        users = self.db.getUsers()
         self.welkompaneel = Welkomstscherm(self, -1)
         self.menupaneel = Menuscherm(self)
         self.beheerpaneel = Beheerscherm(self)
         self.prijzenlijstpaneel = Prijzenlijstscherm(self, prijzen)
-        self.gebruikerspaneel = Gebruikersscherm(self)
+        self.gebruikerspaneel = Gebruikersscherm(self, users)
         self.logpaneel = Logscherm(self)
         self.menupaneel.Hide()
         self.beheerpaneel.Hide()
@@ -99,7 +100,6 @@ class Schermpje(wx.Frame):
         """
         self.db = BakkieControlDatabase()
         prijzen = self.db.getPrijzenlijst()
-        print prijzen
         self.prijzenlijstpaneel = Prijzenlijstscherm(self, prijzen)
         self.boxje.Add(self.prijzenlijstpaneel, 1, wx.EXPAND | wx.ALL)
         self.beheerpaneel.Hide()
@@ -116,19 +116,25 @@ class Schermpje(wx.Frame):
     def bewerken(self, event):
         self.prijzenlijstpaneel.txtCtrlKoffie.SetEditable(True)
         self.prijzenlijstpaneel.txtCtrlThee.SetEditable(True)
+        self.prijzenlijstpaneel.txtCtrlCapp.SetEditable(True)
+        self.prijzenlijstpaneel.txtCtrlFris.SetEditable(True)
         self.prijzenlijstpaneel.txtCtrlBier.SetEditable(True)
         self.prijzenlijstpaneel.txtCtrlWijn.SetEditable(True)
 
     def opslaan(self, event):
         self.prijzenlijstpaneel.txtCtrlKoffie.SetEditable(False)
         self.prijzenlijstpaneel.txtCtrlThee.SetEditable(False)
+        self.prijzenlijstpaneel.txtCtrlCapp.SetEditable(False)
+        self.prijzenlijstpaneel.txtCtrlFris.SetEditable(False)
         self.prijzenlijstpaneel.txtCtrlBier.SetEditable(False)
         self.prijzenlijstpaneel.txtCtrlWijn.SetEditable(False)
 
     def gebruikersscherm(self, event):
         """
         """
-        self.gebruikerspaneel = Gebruikersscherm(self)
+        self.db = BakkieControlDatabase()
+        users = self.db.getUsers()
+        self.gebruikerspaneel = Gebruikersscherm(self, users)
         self.boxje.Add(self.gebruikerspaneel, 1, wx.EXPAND | wx.ALL)
         self.beheerpaneel.Hide()
         self.gebruikerspaneel.Show()
@@ -158,6 +164,7 @@ class Schermpje(wx.Frame):
         else:
             index = self.gebruikerspaneel.LCGebruikers.GetItemCount()
             self.gebruikerspaneel.LCGebruikers.InsertStringItem(index+1, naam)
+            self.db.addUser(naam)
             self.frameToe.Close()
 
     def gebruikerVerwijderen(self, event):
@@ -177,7 +184,9 @@ class Schermpje(wx.Frame):
 
     def verwijderenGebruiker(self, event):
         geselecteerd =  self.gebruikerspaneel.LCGebruikers.GetFirstSelected()
+        naam = self.gebruikerspaneel.LCGebruikers.GetItemText(geselecteerd, 0)
         self.gebruikerspaneel.LCGebruikers.DeleteItem(long(geselecteerd))
+        self.db.deleteUser(naam)
         self.frameVer.Close()
 
     def closePopUpVer(self, event):
