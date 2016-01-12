@@ -43,12 +43,14 @@ class Gebruikersscherm(wx.Panel):
         Gebruikers = [(1, "Jesse"), (2, "Jeroen"), (3, "Sebastiaan"), (4, "Jolanda"), (5, "Dwin")]
         
         self.txtGebruikers = "De huidige gebruikers zijn:"
-        self.stTxtGebruikers = wx.StaticText (paneel, -1, self.txtGebruikers, pos = (15, 80))  
+        self.stTxtGebruikers = wx.StaticText (paneel, -1, self.txtGebruikers, pos = (15, 80))
+        self.stTxtGebruikers.SetForegroundColour((255,255,255))
         
         self.sw = wx.ScrolledWindow(paneel, -1, pos=(15, 100), size=(150, 180))
 
         self.LCGebruikers = wx.ListCtrl(self.sw, -1, pos=(0, 0), size=(600, 400), style = wx.LC_REPORT | wx.LC_NO_HEADER)
         self.LCGebruikers.SetBackgroundColour((46,24,0))
+        self.LCGebruikers.SetTextColour((255,255,255))
 
         self.LCGebruikers.InsertColumn(0, "Gebruikers")
         self.LCGebruikers.Arrange()

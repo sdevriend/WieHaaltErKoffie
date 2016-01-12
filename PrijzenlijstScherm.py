@@ -41,49 +41,54 @@ class Prijzenlijstscherm(wx.Panel):
     def scroll(self, paneel):
         """
         """
-
-        drinken = [(1, "Koffie", "1.20"), (2, "Thee", "1.00"), (3, "Bier", "1.50"), (4, "Wijn", "1.70")]
-        
         self.sw = wx.ScrolledWindow(paneel, -1, pos=(15, 100), size=(600, 180))
 
         txtKoffieTijd = "Lijst met dranken tijdens koffietijd:"
-        stTxtKoffieTijd = wx.StaticText (self.sw, -1, txtKoffieTijd, pos = (15, 5))
+        self.stTxtKoffieTijd = wx.StaticText (self.sw, -1, txtKoffieTijd, pos = (15, 5))
+        self.stTxtKoffieTijd.SetForegroundColour((255,255,255))
   
         self.txtKoffie = self.prijzen[0][1]
         self.stTxtKoffie = wx.StaticText(self.sw, -1, self.txtKoffie, pos = (15, 35))
+        self.stTxtKoffie.SetForegroundColour((255,255,255))
         self.txtCtrlKoffie = wx.TextCtrl(self.sw, -1, value=(str(self.prijzen[0][2])) ,pos=(150, 30))
         self.txtCtrlKoffie.SetEditable(False)
 
         self.txtThee = self.prijzen[1][1]
         self.stTxtThee = wx.StaticText (self.sw, -1, self.txtThee, pos = (15, 65))
+        self.stTxtThee.SetForegroundColour((255,255,255))
         self.txtCtrlThee = wx.TextCtrl(self.sw, -1, value=(str(self.prijzen[1][2])),pos=(150, 60))
         self.txtCtrlThee.SetEditable(False)
 
         self.txtCapp = self.prijzen[2][1]
         self.stTxtCapp = wx.StaticText (self.sw, -1, self.txtCapp, pos = (15, 95))
+        self.stTxtCapp.SetForegroundColour((255,255,255))
         self.txtCtrlCapp = wx.TextCtrl(self.sw, -1, value=(str(self.prijzen[2][2])),pos=(150, 90))
         self.txtCtrlCapp.SetEditable(False)
 
         txtBierTijd = "Lijst met extra dranken na koffietijd:"
-        stTxtBierTijd = wx.StaticText (self.sw, -1, txtBierTijd, pos = (15, 125))
+        self.stTxtBierTijd = wx.StaticText (self.sw, -1, txtBierTijd, pos = (15, 125))
+        self.stTxtBierTijd .SetForegroundColour((255,255,255))
 
         self.txtFris = self.prijzen[3][1]
         self.stTxtFris = wx.StaticText (self.sw, -1, self.txtFris, pos = (15, 155))
+        self.stTxtFris.SetForegroundColour((255,255,255))
         self.txtCtrlFris = wx.TextCtrl(self.sw, -1, value=(str(self.prijzen[3][2])),pos=(150, 150))
         self.txtCtrlFris.SetEditable(False)
         
         self.txtBier = self.prijzen[4][1]
         self.stTxtBier = wx.StaticText (self.sw, -1, self.txtBier, pos = (15, 185))
+        self.stTxtBier.SetForegroundColour((255,255,255))
         self.txtCtrlBier = wx.TextCtrl(self.sw, -1, value=(str(self.prijzen[4][2])),pos=(150, 180))
         self.txtCtrlBier.SetEditable(False)
 
         self.txtWijn = self.prijzen[5][1]
         self.stTxtWijn = wx.StaticText (self.sw, -1, self.txtWijn, pos = (15, 215))
+        self.stTxtWijn.SetForegroundColour((255,255,255))
         self.txtCtrlWijn = wx.TextCtrl(self.sw, -1, value=(str(self.prijzen[5][2])),pos=(150, 210))
         self.txtCtrlWijn.SetEditable(False)
         
         
-        self.sw.SetScrollbars(0,20,0,40)
+        self.sw.SetScrollbars(0,20,0,15)
       
     def navigatiebuttons(self):
         """
