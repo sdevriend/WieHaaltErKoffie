@@ -6,7 +6,8 @@ import wx
 
 import gettext
 
-
+import shutil
+import time
 import pylab
 from creation import Creation
 import os
@@ -20,7 +21,10 @@ class Stats(wx.Frame):
         self.locale = wx.Locale(wx.LANGUAGE_ENGLISH)
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
-        
+        self.savebutton = wx.Button(self, wx.ID_ANY, "Opslaan")
+        self.backbutton = wx.Button(self, wx.ID_ANY, "Terug")
+        self.backbutton.Bind(wx.EVT_BUTTON, self.onBack)
+        self.savebutton.Bind(wx.EVT_BUTTON, self.onSave)
         self.radio_box_1 = wx.RadioBox(self, wx.ID_ANY, _("radio_box_1"), choices=[_("Bar"), _("Circle")], majorDimension=1, style=wx.RA_SPECIFY_ROWS)
         
         pylab.figure(1, figsize=(6,6))
@@ -51,6 +55,12 @@ class Stats(wx.Frame):
         self.onUpdateData(wx.EVT_LISTBOX)
         
         self.__do_layout()
+    def onSave(self, event):
+        newname = str(time.strftime("%y_%m_%d_%H_%M_%S"))
+        newname+=".png"
+        shutil.copy("temp.png",newname)
+    def onBack(self, event):
+        pass
     def getNames(self):
         self.db = BakkieControlDatabase()
         namelist = self.db.getUsers()
@@ -161,15 +171,23 @@ class Stats(wx.Frame):
         self.image.Rescale(666,500)
         image2 = wx.Bitmap(self.image)
         self.bitmap_1 = wx.StaticBitmap(self, wx.ID_ANY, image2)
-        sizer_1 = wx.BoxSizer(wx.VERTICAL)
-        sizer_3 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_2 = wx.BoxSizer(wx.VERTICAL)
-        sizer_2.Add(self.radio_box_1, 0, wx.EXPAND, 0)
+        sizer_1 = wx.BoxSizer(wx.VERTICAL) #sizers
+        sizer_3 = wx.BoxSizer(wx.HORIZONTAL) # list boxes1
+        sizer_2 = wx.BoxSizer(wx.VERTICAL) #Radiobox, bitmap
+        sizer_4 = wx.BoxSizer(wx.HORIZONTAL) # Radiobox, buttons
+        sizer_5 = wx.BoxSizer(wx.HORIZONTAL) #Butons
+        sizer_4.Add(self.radio_box_1, 2, wx.EXPAND, 0)
+        sizer_4.Add(sizer_5, 1, wx.EXPAND, 0)
+        sizer_5.Add(self.backbutton, 1, wx.EXPAND, 0)
+        sizer_5.Add(self.savebutton, 1, wx.EXPAND, 0)
+        sizer_2.Add(sizer_4, 1, wx.EXPAND, 0)
         sizer_2.Add(self.bitmap_1, 0, wx.EXPAND | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
+        
         sizer_1.Add(sizer_2, 1, wx.EXPAND, 0)
         sizer_3.Add(self.list_box_3, 1, wx.EXPAND, 0)
         sizer_3.Add(self.list_box_2, 1, wx.EXPAND, 0)
         sizer_1.Add(sizer_3, 1, wx.EXPAND, 0)
+        
         self.SetSizer(sizer_1)
         
         self.Layout()
