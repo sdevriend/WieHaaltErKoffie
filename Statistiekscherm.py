@@ -17,7 +17,7 @@ class Stats(wx.Frame):
     def __init__(self, *args, **kwds):
         if os.path.isfile("temp.png"):
             os.remove("temp.png")
-            print "BESTAAT"
+            #print "BESTAAT"
         self.locale = wx.Locale(wx.LANGUAGE_ENGLISH)
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
@@ -25,7 +25,7 @@ class Stats(wx.Frame):
         self.backbutton = wx.Button(self, wx.ID_ANY, "Terug")
         self.backbutton.Bind(wx.EVT_BUTTON, self.onBack)
         self.savebutton.Bind(wx.EVT_BUTTON, self.onSave)
-        self.radio_box_1 = wx.RadioBox(self, wx.ID_ANY, _("radio_box_1"), choices=[_("Bar"), _("Circle")], majorDimension=1, style=wx.RA_SPECIFY_ROWS)
+        self.radio_box_1 = wx.RadioBox(self, wx.ID_ANY, _("Soort grafiek"), choices=[_("Bar"), _("Circle")], majorDimension=1, style=wx.RA_SPECIFY_ROWS)
         
         pylab.figure(1, figsize=(6,6))
         
@@ -44,12 +44,12 @@ class Stats(wx.Frame):
         self.list_box_3 = wx.ListBox(self, wx.ID_ANY, choices=names,
                                                                  style=wx.LB_MULTIPLE)
         self.list_box_2 = wx.ListBox(self, wx.ID_ANY, choices=[_("Wie haalt het vaakst?"), _("Wie is de grootste wanbetaler?"),
-                                                               _("Wie lijkt het meest op Dwin"), _("Wie is Kees-Jan")])
+                                                               _("Welke dranken worden het meest gehaald?"), _("Wie geeft het gulst?")])
         self.radio_box_1.Bind(wx.EVT_RADIOBOX, self.onChange)
         self.list_box_2.Bind(wx.EVT_LISTBOX, self.onUpdateData)
         self.list_box_3.Bind(wx.EVT_LISTBOX, self.onUpdateNames)
         sel = self.radio_box_1.GetSelection()
-        #print self.radio_box_1.GetString(sel)
+        ##print self.radio_box_1.GetString(sel)
         self.__set_properties()
         self.onUpdateNames(wx.EVT_LISTBOX)
         self.onUpdateData(wx.EVT_LISTBOX)
@@ -64,43 +64,45 @@ class Stats(wx.Frame):
     def getNames(self):
         self.db = BakkieControlDatabase()
         namelist = self.db.getUsers()
-        #print namelist
+        ##print namelist
         newnames = ['iedereen']
         for tup in namelist:
             newnames.append(tup[1])
         return newnames
     def onUpdateNames(self, event):
-  
+        self.updateNames()
+        
+        self.onUpdateData(wx.EVT_LISTBOX)
+        
+        
+        self.onChange(wx.EVT_RADIOBOX)
+    def updateNames(self):
         selected = self.list_box_3.GetSelections()
         
         if selected[0] == 0:
-            #print "IEDEREEN"
+            ##print "IEDEREEN"
             
             for name in range(self.list_box_3.GetCount()):
                 self.list_box_3.Select(name)
                 
-                #print name
+                ##print name
             selected = self.list_box_3.GetSelections()[1:]   
         newnames = []
         
         
         for selection in selected:
             newnames.append(str(self.list_box_3.GetString(selection)))
-        #print newnames
+        ##print newnames
         self.graph.setNames(newnames)
-        #print self.graph.getNames()
+        ##print self.graph.getNames()
         data = self.graph.getData()
         self.graph.setData(data[:len(newnames)])
         #self.__do_layout()
-        self.onUpdateData(wx.EVT_LISTBOX)
-        
-        print data, "onupdatenames"
-        self.onChange(wx.EVT_RADIOBOX)
     def onUpdateData(self, event):
-        
+        self.updateNames()
         stat = self.list_box_2.GetSelection()
         names = self.graph.getNames()
-        #print stat
+        ##print stat
         if stat == 0:
             freqs = self.db.getUserFreqs()
             
@@ -110,7 +112,7 @@ class Stats(wx.Frame):
             for tup in freqs:
                 data_names.append(tup[0])
                 data_nums.append(tup[1])
-            #print data_names , "D_N"
+            ##print data_names , "D_N"
             
             newdata = []
             for name in names:
@@ -124,7 +126,7 @@ class Stats(wx.Frame):
                 
         elif stat == 1:
             debt = self.db.getUserSchulden()
-            print debt
+            #print debt
             data_names = []
             data_nums = []
             newdata = []
@@ -138,14 +140,37 @@ class Stats(wx.Frame):
                 else:
                     newdata.append(0)
         elif stat == 2:
-            newdata = [12,10,8,6,13,1]
+            
+            freqs = self.db.getFrequenties()
+            data_drinks = []
+            data_nums = []
+            newdata = []
+            for tup in freqs:
+                data_drinks.append(tup[0])
+                data_nums.append(tup[1])
+            
+            self.graph.setNames(data_drinks)
+            newdata = data_nums
         elif stat == 3:
-            newdata = [7,23,1,17,5,6]
-        print self.graph.getData(),"ervoor"
+            loan = self.db.getOpenstaand()
+            #print loan
+            data_names = []
+            data_nums = []
+            newdata = []
+            for tup in loan:
+                data_names.append(tup[0])
+                data_nums.append(tup[1])
+            for name in names:
+                if name in data_names:
+                    namenum = data_names.index(name)
+                    newdata.append(data_nums[namenum])
+                else:
+                    newdata.append(0)
+        #print self.graph.getData(),"ervoor"
         self.graph.setData(newdata)
         
         self.graph.setTitle(str(self.list_box_2.GetString(stat)))
-        print self.graph.getData(),"erna"
+        #print self.graph.getData(),"erna"
         self.onChange(wx.EVT_RADIOBOX)
     def onChange(self, event):
         graphtype = self.radio_box_1.GetString(self.radio_box_1.GetSelection())
@@ -158,7 +183,7 @@ class Stats(wx.Frame):
         self.__do_layout()
     def __set_properties(self):
 
-        self.SetTitle(_("frame_1"))
+        self.SetTitle(_("Statistieken"))
         self.SetSize((900, 675))
         self.radio_box_1.SetSelection(0)
         self.list_box_3.SetSelection(0)

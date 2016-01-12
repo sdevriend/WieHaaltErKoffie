@@ -72,10 +72,10 @@ class Creation():
         # attach some text labels
         for rect in rects:
             height = rect.get_height()
-            print height, "HEIGHT"
+            #print height, "HEIGHT"
             ax.text(rect.get_x() + rect.get_width()/2., 1.05*height,
                     height,
                     ha='center', va='bottom')
-            print rect.get_x(),"X","\n"
+            #print rect.get_x(),"X","\n"
             
 
