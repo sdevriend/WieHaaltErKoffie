@@ -123,6 +123,10 @@ class Schermpje(wx.Frame):
         self.prijzenlijstpaneel.txtCtrlWijn.SetEditable(True)
 
     def opslaan(self, event):
+        self.db = BakkieControlDatabase()
+        prijzen = self.db.getPrijzenlijst()
+        HetZelfde = 0
+
         prijzenlijst= []
         
         self.prijzenlijstpaneel.txtCtrlKoffie.SetEditable(False)
@@ -130,50 +134,69 @@ class Schermpje(wx.Frame):
         if any(c.isalpha() for c in newKoffie):
             prijzenlijst.append((1, "Koffie", self.db.getPrijzenlijst()[0][2]))
             self.prijzenlijstpaneel.txtCtrlKoffie.SetValue(str(self.db.getPrijzenlijst()[0][2]))
+            HetZelfde += 1
         else:
             prijzenlijst.append((1, "Koffie", float(newKoffie)))
+            if str(newKoffie) == str(prijzen[0][2]):
+                HetZelfde += 1
         
         self.prijzenlijstpaneel.txtCtrlThee.SetEditable(False)
         newThee = self.prijzenlijstpaneel.txtCtrlThee.GetLineText(0)
         if any(c.isalpha() for c in newThee):
             prijzenlijst.append((2, "Thee", self.db.getPrijzenlijst()[1][2]))
             self.prijzenlijstpaneel.txtCtrlThee.SetValue(str(self.db.getPrijzenlijst()[1][2]))
+            HetZelfde += 1
         else:
             prijzenlijst.append((2, "Thee", float(newThee)))
+            if str(newThee) == str(prijzen[1][2]):
+                HetZelfde += 1
             
         self.prijzenlijstpaneel.txtCtrlCapp.SetEditable(False)
         newCapp = self.prijzenlijstpaneel.txtCtrlCapp.GetLineText(0)
         if any(c.isalpha() for c in newCapp):
             prijzenlijst.append((3, "Cappuccino", self.db.getPrijzenlijst()[2][2]))
             self.prijzenlijstpaneel.txtCtrlCapp.SetValue(str(self.db.getPrijzenlijst()[2][2]))
+            HetZelfde += 1
         else:
             prijzenlijst.append((3, "Cappuccino", float(newCapp)))
+            if str(newCapp) == str(prijzen[2][2]):
+                HetZelfde += 1
         
         self.prijzenlijstpaneel.txtCtrlFris.SetEditable(False)
         newFris = self.prijzenlijstpaneel.txtCtrlFris.GetLineText(0)
         if any(c.isalpha() for c in newFris):
             prijzenlijst.append((4, "Fris", self.db.getPrijzenlijst()[3][2]))
             self.prijzenlijstpaneel.txtCtrlFris.SetValue(str(self.db.getPrijzenlijst()[3][2]))
+            HetZelfde += 1
         else:
             prijzenlijst.append((4, "Fris", float(newFris)))
+            if str(newFris) == str(prijzen[3][2]):
+                HetZelfde += 1
             
         self.prijzenlijstpaneel.txtCtrlBier.SetEditable(False)
         newBier = self.prijzenlijstpaneel.txtCtrlBier.GetLineText(0)
         if any(c.isalpha() for c in newBier):
             prijzenlijst.append((5, "Bier", self.db.getPrijzenlijst()[4][2]))
             self.prijzenlijstpaneel.txtCtrlBier.SetValue(str(self.db.getPrijzenlijst()[4][2]))
+            HetZelfde += 1
         else:
             prijzenlijst.append((5, "Bier", float(newBier)))
+            if str(newBier) == str(prijzen[4][2]):
+                HetZelfde += 1
         
         self.prijzenlijstpaneel.txtCtrlWijn.SetEditable(False)
         newWijn = self.prijzenlijstpaneel.txtCtrlWijn.GetLineText(0)
         if any(c.isalpha() for c in newWijn):
             prijzenlijst.append((6, "Wijn", self.db.getPrijzenlijst()[5][2]))
             self.prijzenlijstpaneel.txtCtrlWijn.SetValue(str(self.db.getPrijzenlijst()[5][2]))
+            HetZelfde += 1
         else:
             prijzenlijst.append((6, "Wijn", float(newWijn)))
+            if str(newWijn) == str(prijzen[5][2]):
+                HetZelfde += 1
 
-        self.db.setPrijzenlijst(prijzenlijst)
+        if HetZelfde != 6:
+            self.db.setPrijzenlijst(prijzenlijst)
 
     def gebruikersscherm(self, event):
         """
