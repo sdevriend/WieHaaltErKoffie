@@ -7,15 +7,17 @@ import wx
 
 
 class Logscherm(wx.Panel):
-    def __init__(self, parent):
+    def __init__(self, parent, days, log):
         """ 
         """
+        self.days = days
+        self.log = log
         wx.Panel.__init__(self, parent)
         titelpaneel = wx.Panel(self)
         self.teksten(titelpaneel)
         self.menubuttons(titelpaneel)
         self.radio(titelpaneel)
-        self.log(titelpaneel)
+        self.logbox(titelpaneel)
         boxje = self.boxen(titelpaneel)
         self.eindbox = wx.BoxSizer()
         self.eindbox.Add(boxje, 1, wx.EXPAND | wx.ALL)
@@ -39,23 +41,20 @@ class Logscherm(wx.Panel):
         """
         """
         self.stTxtDatum = wx.StaticText(paneel, -1, "Datum", pos = (15, 80))
-        self.stTxtDatum.SetBackgroundColour((255,255,255))
-        keuze = ["alles","vandaag", "1 dag geleden", "2 dagen geleden", "3 dagen geleden", "4 dagen geleden",
-                 "5 dagen geleden", "6 dagen geleden"]
-        self.CBDatum = wx.ComboBox(paneel, -1, "alles",pos=(55, 80), choices=keuze)
+        self.stTxtDatum.SetForegroundColour((255,255,255))
+        self.CBDatum = wx.ComboBox(paneel, -1, "alles",pos=(55, 80), choices=self.days)
 
-    def log(self, paneel):
-        lijst = [("7-1-16", "Jesse is Homo."), ("7-1-16", "Bier!"), ("6-1-16", "geen zin meer"), ("5-1-16", "Noit gehad")]
-        self.list = wx.ListCtrl(paneel, -1, pos=(15,110), style=wx.LC_REPORT|wx.SUNKEN_BORDER)
+    def logbox(self, paneel):
+        self.list = wx.ListCtrl(paneel, -1, pos=(15,110), size=(550, 200), style=wx.LC_REPORT|wx.SUNKEN_BORDER)
         self.list.SetBackgroundColour((46,24,0))
         self.list.SetTextColour((255,255,255))
         self.list.Show(True)
-        self.list.InsertColumn(0,"Datum")
+        self.list.InsertColumn(0,"Datum", width=130)
         self.list.InsertColumn(1,"Geberurtenis",  width=wx.LIST_AUTOSIZE_USEHEADER)
 
-        for i in reversed(lijst):
-            pos = self.list.InsertStringItem(0,i[0])
-            self.list.SetStringItem(pos,1,i[1])
+        for a in self.log[0]:
+            pos = self.list.InsertStringItem(0,str(a[0]))
+            self.list.SetStringItem(pos,1,str(a[1]))
 
     def boxen(self, paneel):
         """ 
