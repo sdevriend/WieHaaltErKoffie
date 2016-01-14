@@ -52,10 +52,13 @@ class Logscherm(wx.Panel):
         self.list.InsertColumn(0,"Datum", width=130)
         self.list.InsertColumn(1,"Geberurtenis",  width=wx.LIST_AUTOSIZE_USEHEADER)
 
-        for a in self.log[0]:
-            pos = self.list.InsertStringItem(0,str(a[0]))
-            self.list.SetStringItem(pos,1,str(a[1]))
-
+        try:
+            for a in self.log[0]:
+                pos = self.list.InsertStringItem(0,str(a[0]))
+                self.list.SetStringItem(pos,1,str(a[1]))
+        except:
+            pass
+        
     def boxen(self, paneel):
         """ 
         vbox = wx.BoxSizer(wx.VERTICAL)
