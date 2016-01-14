@@ -262,11 +262,12 @@ class BakkieControlDatabase():
         """
         oudPrijs = self.getPrijzenlijst()
         for nPrijs, oudPrijs in zip(newPrijs, oudPrijs):
-            if nPrijs != oudPrijs:
+            if str(nPrijs) != str(oudPrijs):
                 self.cursor.execute('UPDATE Prijzenlijst SET Prijs = ? WHERE ID = ?;', (nPrijs[2], nPrijs[0],))
                 self.connection.commit()
                 bericht = "De prijs voor " + nPrijs[1] + " is veranderd van: " + str(oudPrijs[2]) + " naar: " + str(nPrijs[2])
                 self.__writelog(bericht)
+        
     def setBestelling(self, HaalID, Bestellingen):
         """
         Input: 2
@@ -406,7 +407,7 @@ class BakkieControlDatabase():
             self.cursor.execute('SELECT Datum, Bericht FROM Log WHERE Datum > ? AND Datum < ?;', (begin, end, ))
             rows = self.cursor.fetchall()
             if len(rows) > 0:
-                daynames.append(datetime.datetime.fromtimestamp(begin).strftime('%A'))
+                daynames.append(datetime.datetime.fromtimestamp(begin).strftime('%Y-%m-%d'))
                 daglog = []
                 for row in rows:
                     rowtimestamp = datetime.datetime.fromtimestamp(row[0]).strftime('%Y-%m-%d %H:%M:%S')
