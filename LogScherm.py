@@ -53,9 +53,10 @@ class Logscherm(wx.Panel):
         self.list.InsertColumn(1,"Geberurtenis",  width=wx.LIST_AUTOSIZE_USEHEADER)
 
         try:
-            for a in self.log[0]:
-                pos = self.list.InsertStringItem(0,str(a[0]))
-                self.list.SetStringItem(pos,1,str(a[1]))
+            for i in reversed(self.log):
+                for a in i:
+                    pos = self.list.InsertStringItem(0,str(a[0]))
+                    self.list.SetStringItem(pos,1,str(a[1]))
         except:
             pass
         

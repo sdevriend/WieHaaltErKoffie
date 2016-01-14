@@ -264,6 +264,7 @@ class Schermpje(wx.Frame):
     def logScherm(self, event):
         self.db = BakkieControlDatabase()
         days, log = self.db.getLog()
+        #print log
         self.logpaneel = Logscherm(self, days, log)
         self.boxje.Add(self.logpaneel, 1, wx.EXPAND | wx.ALL)
         self.beheerpaneel.Hide()
@@ -274,6 +275,24 @@ class Schermpje(wx.Frame):
         self.boxje.Layout()
 
         self.logpaneel.terug.Bind(wx.EVT_BUTTON, self.beheer)
+        self.logpaneel.CBDatum.Bind(wx.EVT_COMBOBOX, self.nieuweLog)
+
+    def nieuweLog(self, event):
+        dag = self.logpaneel.CBDatum.GetValue()
+        self.db = BakkieControlDatabase()
+        days, log = self.db.getLog()
+        for item in log:
+            if str(item[0][0][0:10]) == str(dag):
+                index = log.index(item)
+                self.logpaneel.list.ClearAll()
+                self.logpaneel.list.InsertColumn(0,"Datum", width=130)
+                self.logpaneel.list.InsertColumn(1,"Geberurtenis",  width=wx.LIST_AUTOSIZE_USEHEADER)
+                try:
+                    for a in log[index]:
+                        pos = self.logpaneel.list.InsertStringItem(0,str(a[0]))
+                        self.logpaneel.list.SetStringItem(pos,1,str(a[1]))
+                except:
+                    pass
 
     def onStop(self, event):
         """ Als onStop als event van een knop wordt gebonden sluit het
