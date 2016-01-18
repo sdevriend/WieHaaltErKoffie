@@ -8,7 +8,7 @@ import wx
 
 class Welkomstscherm(wx.Panel):
     def __init__(self, parent, id):
-        """ 
+        """
         """
         wx.Panel.__init__(self, parent, id)
         paneel1 = wx.Panel(self, id)
@@ -27,6 +27,7 @@ class Welkomstscherm(wx.Panel):
         titeltje = wx.StaticText(paneel1, -1, "Wat voor tijd is het?",
                                  pos=(200, 10), size=(295, -1),
                                  style=wx.ALIGN_CENTER)
+        titeltje.SetForegroundColour((232,144,30))
         titeltje.SetFont(wx.Font(40, wx.DECORATIVE, wx.NORMAL, wx.NORMAL))
 
     def buttons(self):
