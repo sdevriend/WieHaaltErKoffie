@@ -18,14 +18,16 @@ class Stats(wx.Frame):
         if os.path.isfile("temp.png"):
             os.remove("temp.png")
             #print "BESTAAT"
+        
         self.locale = wx.Locale(wx.LANGUAGE_ENGLISH)
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
+        self.SetBackgroundColour((92,48,0))
         self.savebutton = wx.Button(self, wx.ID_ANY, "Opslaan")
         self.backbutton = wx.Button(self, wx.ID_ANY, "Terug")
         self.backbutton.Bind(wx.EVT_BUTTON, self.onBack)
         self.savebutton.Bind(wx.EVT_BUTTON, self.onSave)
-        self.radio_box_1 = wx.RadioBox(self, wx.ID_ANY, _("Soort grafiek"), choices=[_("Bar"), _("Circle")], majorDimension=1, style=wx.RA_SPECIFY_ROWS)
+        self.radio_box_1 = wx.RadioBox(self, wx.ID_ANY, ("Soort grafiek"), choices=[("Bar"), ("Circle")], majorDimension=1, style=wx.RA_SPECIFY_ROWS)
         
         pylab.figure(1, figsize=(6,6))
         
@@ -43,8 +45,8 @@ class Stats(wx.Frame):
         names = self.getNames()
         self.list_box_3 = wx.ListBox(self, wx.ID_ANY, choices=names,
                                                                  style=wx.LB_MULTIPLE)
-        self.list_box_2 = wx.ListBox(self, wx.ID_ANY, choices=[_("Wie haalt het vaakst?"), _("Wie is de grootste wanbetaler?"),
-                                                               _("Welke dranken worden het meest gehaald?"), _("Wie geeft het gulst?")])
+        self.list_box_2 = wx.ListBox(self, wx.ID_ANY, choices=[("Wie haalt het vaakst?"), ("Wie is de grootste wanbetaler?"),
+                                                               ("Welke dranken worden het meest gehaald?"), ("Wie geeft het gulst?")])
         self.radio_box_1.Bind(wx.EVT_RADIOBOX, self.onChange)
         self.list_box_2.Bind(wx.EVT_LISTBOX, self.onUpdateData)
         self.list_box_3.Bind(wx.EVT_LISTBOX, self.onUpdateNames)
@@ -60,7 +62,7 @@ class Stats(wx.Frame):
         newname+=".png"
         shutil.copy("temp.png",newname)
     def onBack(self, event):
-        pass
+        self.Hide()
     def getNames(self):
         self.db = BakkieControlDatabase()
         namelist = self.db.getUsers()
@@ -183,12 +185,12 @@ class Stats(wx.Frame):
         self.__do_layout()
     def __set_properties(self):
 
-        self.SetTitle(_("Statistieken"))
+        self.SetTitle(("Statistieken"))
         self.SetSize((900, 675))
         self.radio_box_1.SetSelection(0)
         self.list_box_3.SetSelection(0)
         self.list_box_2.SetSelection(0)
-
+        #self.radio_box_1.SetBackgroudColour((46,24,0))
     
     def __do_layout(self):
 
@@ -207,7 +209,7 @@ class Stats(wx.Frame):
         sizer_5.Add(self.savebutton, 1, wx.EXPAND, 0)
         sizer_2.Add(sizer_4, 1, wx.EXPAND, 0)
         sizer_2.Add(self.bitmap_1, 0, wx.EXPAND | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
-        
+ 
         sizer_1.Add(sizer_2, 1, wx.EXPAND, 0)
         sizer_3.Add(self.list_box_3, 1, wx.EXPAND, 0)
         sizer_3.Add(self.list_box_2, 1, wx.EXPAND, 0)
