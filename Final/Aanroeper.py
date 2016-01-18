@@ -10,6 +10,8 @@ from Instellingen_drinken_halen_1 import In_dr_ha_1_scherm
 from Bestelling_drinken_halen_1 import Be_dr_ha_1_scherm
 from Bestelling_drinken_halen_1 import PopUpFrame
 #from Statistiekscherm import Stats
+import Schuldenscherm
+import VereffenSchuld
 from BeheerScherm import Beheerscherm
 from PrijzenlijstScherm import Prijzenlijstscherm
 from GebruikersScherm import Gebruikersscherm
@@ -89,7 +91,9 @@ class Schermpje(wx.Frame):
             self.beheerpaneel.Hide()
         except AttributeError:
             pass
+        
         self.menupaneel = Menuscherm(self, -1)
+        
         try:
             self.boxje.Add(self.menupaneel, 1, wx.EXPAND | wx.ALL)
             self.welkompaneel.Hide()
@@ -99,6 +103,7 @@ class Schermpje(wx.Frame):
         self.menupaneel.stop_knop.Bind(wx.EVT_BUTTON, self.onStop)
         self.menupaneel.terug_knop.Bind(wx.EVT_BUTTON, self.naarWelkom)
         self.menupaneel.drinken_halen_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarIn_dr_ha_1(evt, tijd))
+        self.menupaneel.schulden_knop.Bind(wx.EVT_BUTTON, lambda evt : self.SchuldStartfunctie(evt, tijd))
         self.menupaneel.beheer_knop.Bind(wx.EVT_BUTTON, lambda evt : self.beheer(evt, tijd))
         #self.menupaneel.statistiek_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarStatistiek(evt, tijd))
         self.SetSize((850, 550))
@@ -155,6 +160,107 @@ class Schermpje(wx.Frame):
         self.frame1.Show()
         self.frame1.ok.Bind(wx.EVT_BUTTON, lambda evt : self.naarMenu(evt, tijd))
 
+    def SchuldStartfunctie(self, event, tijd):
+        users = self.db.getUsers()
+        self.Gebruikers = [x[1] for x in users]
+        self.IDs = {}
+        for x in users:
+            self.IDs[x[1]] = x[0]
+        self.HergroepeerSchuld()
+        self.schuldige = "1"
+        self.schuldeiser = "1"
+        self.SchuldStartfunctie2()
+        
+    def SchuldStartfunctie2(self):
+	#Bouwt het scherm
+        self.SchuldSetpanel()
+        self.SchuldStartscherm()
+        self.Schuldbuttonevents()
+
+    def HergroepeerSchuld(self):
+	#Filtert de IDs uit de schulden lijst van de database (self.schulden)
+	# Filtert de namen uit de schuldenlijst van de database (self.SchuldByID)
+        Schuld = self.db.getSchulden()
+        self.schulden = []
+        self.SchuldByID = []
+        for x in Schuld:
+            temp = [x[1], x[3], x[4]]
+            temp2 = [x[0], x[2], x[4]]
+            self.schulden.append(temp)
+            self.SchuldByID.append(temp2)
+
+    def SchuldSetpanel(self):
+	#Aanroepen schermen
+        self.paneel = wx.Panel(self, -1)
+        self.Schuldpaneel = Schuldenscherm.Schuldenscherm1(self.paneel, -1, self.Gebruikers,
+                                                      self.schulden)
+        self.Vereffenpaneel = VereffenSchuld.VereffenScherm(self.paneel, -1, self.Gebruikers)
+        self.frame = VereffenSchuld.PopUpFrameVereffend()
+        
+    def SchuldStartscherm(self):
+        #self.boxje = wx.BoxSizer(wx.VERTICAL)
+        self.boxje.Add(self.Schuldpaneel, 1, wx.EXPAND | wx.ALL)
+        self.boxje.Add(self.Vereffenpaneel, 1, wx.EXPAND | wx.ALL)
+        self.Schuldpanelhide(self.Schuldpaneel, (750, 600))
+        self.paneel.SetSizer(self.boxje)
+        self.Centre()
+        self.Show(True)
+           
+    def Schuldpanelhide(self, zie, bh):
+	#Hide overbodige panelen.
+	#zie = paneel welke te zien is
+	#bh = breedte x hoogte
+        self.menupaneel.Hide()
+        self.Schuldpaneel.Hide()
+        self.Vereffenpaneel.Hide()
+        self.frame.Hide()
+        zie.Show()
+        self.SetSize(bh)
+        self.Centre()
+        self.Refresh()
+
+    def Schuldbuttonevents(self):
+	#Bindt de buttons
+        self.Schuldpaneel.Terug.Bind(wx.EVT_BUTTON, self.SchuldTerugButton)
+        self.Schuldpaneel.Schuldknop.Bind(wx.EVT_BUTTON, self.SchuldButton)
+        self.Vereffenpaneel.Vereffenknop.Bind(wx.EVT_BUTTON, self.VereffenButton)
+        self.Vereffenpaneel.drop1.Bind(wx.EVT_COMBOBOX, self.SchuldDropButton1)
+        self.Vereffenpaneel.drop2.Bind(wx.EVT_COMBOBOX, self.SchuldDropButton2)
+        self.frame.terug.Bind(wx.EVT_BUTTON, self.SchuldTerugButton)
+
+    def SchuldTerugButton(self, event):
+        #Code voor scherm terug vanaf schuldenscherm, moet naar menuscherm
+        "voer hier code in om terug te gaan naar het menuscherm"
+
+    def SchuldButton(self, event):
+	#Start het vereffenschuld scherm op
+        self.Schuldpanelhide(self.Vereffenpaneel, (450, 300))
+        
+    def VereffenButton(self, event):
+	#Vereffend schuld tussen twee gebruikers
+        if self.schuldige == self.schuldeiser or self.schuldige == "1" or self.schuldeiser == "1":
+            pass
+        else:
+            SchuldigeID = self.IDs[self.schuldige] #Haalt ID op
+            SchuldEiserID = self.IDs[self.schuldeiser] #Haalt ID op
+            for x in self.SchuldByID:
+                if x[0] == SchuldigeID and x[1] == SchuldEiserID:
+                    Check1 = x[2] # schuld te vereffenen 
+                if x[1] == SchuldigeID and x[0] == SchuldEiserID:
+                    Check2 = x[2] # schuld andersom te vereffenen
+            if float(Check1) > float(Check2):
+                self.db.setSchulden(SchuldEiserID, SchuldigeID)
+                self.db.setSchulden(SchuldigeID, SchuldEiserID)# reset beiden naar 0
+            if float(Check2) > float(Check1):
+                self.db.setSchulden(SchuldEiserID, SchuldigeID) #reset laagste schuld naar 0
+                self.db.setSchulden(SchuldigeID, SchuldEiserID, float(Check2 - Check1))                
+            self.Schuldpanelhide(self.frame, (300, 150))
+
+    def SchuldDropButton1(self, event):
+        self.schuldige = self.Vereffenpaneel.drop1.GetValue() #Haalt naam schuldige op
+
+    def SchuldDropButton2(self, event):
+        self.schuldeiser = self.Vereffenpaneel.drop2.GetValue() #Haalt naam schuldeiser op
 
     """
     def naarStatistiek(self, event, tijd):
@@ -165,6 +271,8 @@ class Schermpje(wx.Frame):
      
         self.statspaneel.Show()
     """
+
+    
 
     def beheer(self, event, tijd):
         """
