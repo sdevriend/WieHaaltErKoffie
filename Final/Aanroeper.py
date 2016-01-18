@@ -9,7 +9,7 @@ from menuscherm_1 import Menuscherm
 from Instellingen_drinken_halen_1 import In_dr_ha_1_scherm
 from Bestelling_drinken_halen_1 import Be_dr_ha_1_scherm
 from Bestelling_drinken_halen_1 import PopUpFrame
-from Statistiekscherm import Stats
+#from Statistiekscherm import Stats
 from BeheerScherm import Beheerscherm
 from PrijzenlijstScherm import Prijzenlijstscherm
 from GebruikersScherm import Gebruikersscherm
@@ -100,7 +100,7 @@ class Schermpje(wx.Frame):
         self.menupaneel.terug_knop.Bind(wx.EVT_BUTTON, self.naarWelkom)
         self.menupaneel.drinken_halen_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarIn_dr_ha_1(evt, tijd))
         self.menupaneel.beheer_knop.Bind(wx.EVT_BUTTON, lambda evt : self.beheer(evt, tijd))
-        self.menupaneel.statistiek_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarStatistiek(evt, tijd))
+        #self.menupaneel.statistiek_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarStatistiek(evt, tijd))
         self.SetSize((850, 550))
         self.SetSizer(self.boxje)
         self.Centre()
@@ -155,6 +155,8 @@ class Schermpje(wx.Frame):
         self.frame1.Show()
         self.frame1.ok.Bind(wx.EVT_BUTTON, lambda evt : self.naarMenu(evt, tijd))
 
+
+    """
     def naarStatistiek(self, event, tijd):
         
         self.statspaneel = Stats(self, wx.ID_ANY, "")
@@ -162,6 +164,7 @@ class Schermpje(wx.Frame):
        
      
         self.statspaneel.Show()
+    """
 
     def beheer(self, event, tijd):
         """

@@ -35,12 +35,12 @@ class Menuscherm(wx.Panel):
         """
         
         self.drinken_halen_knop = wx.Button(self, -1, "Drinken halen")
-        self.prijzenkaart_knop = wx.Button(self, -1, "Prijzenkaart")
+        self.schulden_knop = wx.Button(self, -1, "Schulden")
         self.statistiek_knop = wx.Button(self, -1, "Statistiek")
         self.beheer_knop = wx.Button(self, -1, "Beheer")
         menubox_left = wx.BoxSizer(wx.VERTICAL)
         menubox_right = wx.BoxSizer(wx.VERTICAL)
-        for x in [self.drinken_halen_knop, self.prijzenkaart_knop]:
+        for x in [self.drinken_halen_knop, self.schulden_knop]:
             box = self.layoutbox(x)
             menubox_left.Add(box, 1, wx.EXPAND | wx.ALL)
         for x in [self.statistiek_knop, self.beheer_knop]:
