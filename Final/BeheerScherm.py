@@ -6,18 +6,15 @@ Jeroen Kuivenhoven      s1084216
 import wx
 
 
-class Logscherm(wx.Panel):
-    def __init__(self, parent, days, log):
+class Beheerscherm(wx.Panel):
+    def __init__(self, parent):
         """ 
         """
-        self.days = days
-        self.log = log
         wx.Panel.__init__(self, parent)
         titelpaneel = wx.Panel(self)
         self.teksten(titelpaneel)
         self.menubuttons(titelpaneel)
-        self.radio(titelpaneel)
-        self.logbox(titelpaneel)
+        self.navigatiebuttons()
         boxje = self.boxen(titelpaneel)
         self.eindbox = wx.BoxSizer()
         self.eindbox.Add(boxje, 1, wx.EXPAND | wx.ALL)
@@ -26,40 +23,25 @@ class Logscherm(wx.Panel):
     def teksten(self, paneel):
         """ 
         """
-        titeltje = wx.StaticText(paneel, -1, "Logscherm",
+        titeltje = wx.StaticText(paneel, -1, "Beheer",
                                  pos=(10, 10), size=(295, -1),
                                  style=wx.ALIGN_LEFT)
-        titeltje.SetForegroundColour((255,191,0))
+        titeltje.SetForegroundColour((232,144,30))
         titeltje.SetFont(wx.Font(40, wx.DECORATIVE, wx.NORMAL, wx.NORMAL))
 
     def menubuttons(self, paneel):
         """ 
         """
+        self.pri = wx.Button(paneel, -1,'Verander prijzenlijst', pos=(350, 110) ,size=(250, 60))
+        self.geb = wx.Button(paneel, -1,'Gebruikers beheren', pos=(350, 190), size=(250, 60))
+        self.log = wx.Button(paneel, -1,'Logbestand', pos=(350, 270), size=(250, 60))
         self.terug = wx.Button(paneel, -1,'Terug', pos=(10, 330), size=(200, 60))
-
-    def radio(self, paneel):
-        """
-        """
-        self.stTxtDatum = wx.StaticText(paneel, -1, "Datum", pos = (15, 80))
-        self.stTxtDatum.SetForegroundColour((255,255,255))
-        self.CBDatum = wx.ComboBox(paneel, -1, "alles",pos=(55, 80), choices=self.days)
-
-    def logbox(self, paneel):
-        self.list = wx.ListCtrl(paneel, -1, pos=(15,110), size=(550, 200), style=wx.LC_REPORT|wx.SUNKEN_BORDER)
-        self.list.SetBackgroundColour((46,24,0))
-        self.list.SetTextColour((255,255,255))
-        self.list.Show(True)
-        self.list.InsertColumn(0,"Datum", width=130)
-        self.list.InsertColumn(1,"Geberurtenis",  width=wx.LIST_AUTOSIZE_USEHEADER)
-
-        try:
-            for i in reversed(self.log):
-                for a in i:
-                    pos = self.list.InsertStringItem(0,str(a[0]))
-                    self.list.SetStringItem(pos,1,str(a[1]))
-        except:
-            pass
         
+    def navigatiebuttons(self):
+        """
+        """
+        self.terug_knop = wx.Button(self, -1, ("Terug"))
+
     def boxen(self, paneel):
         """ 
         vbox = wx.BoxSizer(wx.VERTICAL)

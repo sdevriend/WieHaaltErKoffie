@@ -1,11 +1,15 @@
 """
-Dwin Grashof      s1082225
+Jeroen Kuivenhoven      s1084216
 De aanroeper
 
 """
 
 from welkomstscherm_1 import Welkomstscherm
 from menuscherm_1 import Menuscherm
+from Instellingen_drinken_halen_1 import In_dr_ha_1_scherm
+from Bestelling_drinken_halen_1 import Be_dr_ha_1_scherm
+from Bestelling_drinken_halen_1 import PopUpFrame
+#from Statistiekscherm import Stats
 from BeheerScherm import Beheerscherm
 from PrijzenlijstScherm import Prijzenlijstscherm
 from GebruikersScherm import Gebruikersscherm
@@ -13,7 +17,6 @@ from GebruikersScherm import PopUpFrameToe
 from GebruikersScherm import PopUpFrameVer
 from LogScherm import Logscherm
 from BakkieControlDatabase import BakkieControlDatabase
-
 
 import wx
 import random
@@ -27,76 +30,179 @@ class Schermpje(wx.Frame):
                           wx.CAPTION | wx.CLIP_CHILDREN, size=(1000, 750))
         self.boxje = wx.BoxSizer()
         self.SetBackgroundColour((46,24,0))
-        self.welkom(self)
+        self.welkom()
         self.SetSizer(self.boxje)
         self.Centre()
         self.Show()
 
-    def welkom(self, event):
+    def welkom(self):
         """ 
         """
         self.db = BakkieControlDatabase()
-        prijzen = self.db.getPrijzenlijst()
-        users = self.db.getUsers()
-        days, log = self.db.getLog()
+        self.prijzen = self.db.getPrijzenlijst()
+        self.users = self.db.getUsers()
+        
         self.welkompaneel = Welkomstscherm(self, -1)
-        self.menupaneel = Menuscherm(self)
-        self.beheerpaneel = Beheerscherm(self)
-        self.prijzenlijstpaneel = Prijzenlijstscherm(self, prijzen)
-        self.gebruikerspaneel = Gebruikersscherm(self, users)
-        self.logpaneel = Logscherm(self, days, log)
+        self.menupaneel = Menuscherm(self, -1)
         self.menupaneel.Hide()
-        self.beheerpaneel.Hide()
-        self.prijzenlijstpaneel.Hide()
-        self.gebruikerspaneel.Hide()
-        self.logpaneel.Hide()
         self.boxje.Add(self.welkompaneel, 1, wx.EXPAND | wx.ALL)
-        self.welkompaneel.koffie_knop.Bind(wx.EVT_BUTTON, self.naarMenu)
-        self.welkompaneel.bier_knop.Bind(wx.EVT_BUTTON, self.naarMenu)
+        self.welkompaneel.koffie_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarMenu(evt, "koffie"))
+        self.welkompaneel.bier_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarMenu(evt, "bier"))
 
-    def naarMenu(self, event):
-        """
-        """
-        self.menupaneel = Menuscherm(self) #Balngrijk
+    def bier(self, event):
+        self.SetBackgroundColour((255,255,20))
+
+    def koffie(self, event):
+        self.SetBackgroundColour((46,24,0))
+
+    def naarWelkom(self, event):
+        self.menupaneel.Hide()
+        self.welkompaneel.Hide()
+        self.welkompaneel = Welkomstscherm(self, -1)
+        self.menupaneel = Menuscherm(self, -1)
         try:
-            self.boxje.Add(self.menupaneel, 1, wx.EXPAND | wx.ALL) #probeert het paneel toe te voegen
-            self.welkompaneel.Hide()    #Daarna wordt het welkomstscherm verborgen
-        except wx._core.PyAssertionError: #De error die optreed
+            self.boxje.Add(self.welkompaneel, 1, wx.EXPAND | wx.ALL)
+            self.menupaneel.Hide()
+        except wx._core.PyAssertionError:
             pass
-        self.beheerpaneel.Hide() #Hide alle schermen die een terugknop hebben naar dit scherm
-        self.menupaneel.Show()
-        self.SetSize((700, 440))
+        #self.menupaneel.Hide()
+        #self.boxje.Add(self.welkompaneel, 1, wx.EXPAND | wx.ALL)
+        self.welkompaneel.koffie_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarMenu(evt, "koffie"))
+        #self.welkompaneel.koffie_knop.Bind(wx.EVT_BUTTON, self.koffie)
+        self.welkompaneel.bier_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarMenu(evt, "bier"))
+        #self.welkompaneel.bier_knop.Bind(wx.EVT_BUTTON, self.bier)
+        self.SetSize((1000, 750))
         self.SetSizer(self.boxje)
         self.Centre()
         self.boxje.Layout()
 
-        self.menupaneel.new.Bind(wx.EVT_BUTTON, self.beheer)
+    def naarMenu(self, event, tijd):
+        """
+        """
+        try:
+            self.drinken_1_paneel.Hide()
+            self.bestelling_paneel.Hide()
+            self.frame1.Hide()
+        except AttributeError:
+            pass
+        try:
+            self.beheerpaneel.Hide()
+        except AttributeError:
+            pass
+        self.menupaneel = Menuscherm(self, -1)
+        try:
+            self.boxje.Add(self.menupaneel, 1, wx.EXPAND | wx.ALL)
+            self.welkompaneel.Hide()
+        except wx._core.PyAssertionError:
+            pass
+        self.menupaneel.Show()
+        self.menupaneel.stop_knop.Bind(wx.EVT_BUTTON, self.onStop)
+        self.menupaneel.terug_knop.Bind(wx.EVT_BUTTON, self.naarWelkom)
+        self.menupaneel.drinken_halen_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarIn_dr_ha_1(evt, tijd))
+        self.menupaneel.beheer_knop.Bind(wx.EVT_BUTTON, lambda evt : self.beheer(evt, tijd))
+        #self.menupaneel.statistiek_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarStatistiek(evt, tijd))
+        self.SetSize((850, 550))
+        self.SetSizer(self.boxje)
+        self.Centre()
+        self.boxje.Layout()
 
-    def beheer(self, event):
+    def naarIn_dr_ha_1(self, event, tijd):
+        self.users = self.db.getUsers()
+        self.drinken_1_paneel = In_dr_ha_1_scherm(self, -1, self.users)
+        try:
+            self.bestelling_paneel.Hide()
+        except AttributeError:
+            pass
+        try:
+            self.boxje.Add(self.drinken_1_paneel, 1, wx.EXPAND | wx.ALL)
+            self.menupaneel.Hide()
+        except wx._core.PyAssertionError:
+            pass
+        #self.drinken_1_paneel.Update()
+        self.drinken_1_paneel.Show()
+        #self.drinken_1_paneel.drinken_halen_knop.Bind(wx.EVT_RADIOBUTTON, self.naam)
+        self.drinken_1_paneel.stop_knop.Bind(wx.EVT_BUTTON, self.onStop)
+        self.drinken_1_paneel.terug_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarMenu(evt, tijd))
+        self.drinken_1_paneel.random_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarBestelling(evt, tijd))
+        self.drinken_1_paneel.hoogste_s_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarBestelling(evt, tijd))
+        
+        self.SetSize((950, 550))
+        self.SetSizer(self.boxje)
+        self.Centre()
+        self.boxje.Layout()
+
+    def naarBestelling(self, event, tijd):
+        dezewillen = self.drinken_1_paneel.bestellers
+        if len(dezewillen) > 0:
+            self.bestelling_paneel = Be_dr_ha_1_scherm(self, -1, dezewillen, self.prijzen, tijd)
+            try:
+                self.boxje.Add(self.bestelling_paneel, 1, wx.EXPAND | wx.ALL)
+                self.drinken_1_paneel.Hide()
+            except wx._core.PyAssertionError:
+                pass
+            self.bestelling_paneel.Show()
+            #self.drinken_1_paneel.drinken_halen_knop.Bind(wx.EVT_RADIOBUTTON, self.naam)
+            self.bestelling_paneel.doorgaan_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarPopUp(evt, tijd))
+            self.bestelling_paneel.terug_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarIn_dr_ha_1(evt, tijd))
+
+            self.SetSize((800, 700))
+            self.SetSizer(self.boxje)
+            self.Centre()
+            self.boxje.Layout()
+
+    def naarPopUp(self, event, tijd):
+        self.frame1 = PopUpFrame()
+        self.frame1.Show()
+        self.frame1.ok.Bind(wx.EVT_BUTTON, lambda evt : self.naarMenu(evt, tijd))
+
+
+    """
+    def naarStatistiek(self, event, tijd):
+        
+        self.statspaneel = Stats(self, wx.ID_ANY, "")
+        self.statspaneel.Centre()
+       
+     
+        self.statspaneel.Show()
+    """
+
+    def beheer(self, event, tijd):
         """
         """
         self.beheerpaneel = Beheerscherm(self) #Balngrijk
+        try:
+            self.menupaneel.Hide()
+        except AttributeError:
+            pass
+        try:
+            self.prijzenlijstpaneel.Hide()
+        except AttributeError:
+            pass
+        try:
+            self.gebruikerspaneel.Hide()
+        except AttributeError:
+            pass
+        try:
+            self.logpaneel.Hide()
+        except AttributeError:
+            pass
         try:
             self.boxje.Add(self.beheerpaneel, 1, wx.EXPAND | wx.ALL)
             self.menupaneel.Hide()
         except wx._core.PyAssertionError:
             pass
-        self.menupaneel.Hide()
-        self.prijzenlijstpaneel.Hide()
-        self.gebruikerspaneel.Hide()
-        self.logpaneel.Hide()
         self.beheerpaneel.Show()
         self.SetSize((700, 440))
         self.SetSizer(self.boxje)
         self.Centre()
         self.boxje.Layout()
 
-        self.beheerpaneel.terug.Bind(wx.EVT_BUTTON, self.naarMenu)
-        self.beheerpaneel.pri.Bind(wx.EVT_BUTTON, self.prijzenlijstscherm)
-        self.beheerpaneel.geb.Bind(wx.EVT_BUTTON, self.gebruikersscherm)
-        self.beheerpaneel.log.Bind(wx.EVT_BUTTON, self.logScherm)
+        self.beheerpaneel.terug.Bind(wx.EVT_BUTTON, lambda evt : self.naarMenu(evt, tijd))
+        self.beheerpaneel.pri.Bind(wx.EVT_BUTTON, lambda evt : self.prijzenlijstscherm(evt, tijd))
+        self.beheerpaneel.geb.Bind(wx.EVT_BUTTON, lambda evt : self.gebruikersscherm(evt, tijd))
+        self.beheerpaneel.log.Bind(wx.EVT_BUTTON, lambda evt : self.logScherm(evt, tijd))
 
-    def prijzenlijstscherm(self, event):
+    def prijzenlijstscherm(self, event, tijd):
         """
         """
         self.db = BakkieControlDatabase()
@@ -110,7 +216,7 @@ class Schermpje(wx.Frame):
         self.Centre()
         self.boxje.Layout()
 
-        self.prijzenlijstpaneel.terug.Bind(wx.EVT_BUTTON, self.beheer)
+        self.prijzenlijstpaneel.terug.Bind(wx.EVT_BUTTON, lambda evt : self.beheer(evt, tijd))
         self.prijzenlijstpaneel.bew.Bind(wx.EVT_BUTTON, self.bewerken)
         self.prijzenlijstpaneel.ops.Bind(wx.EVT_BUTTON, self.opslaan)
 
@@ -198,7 +304,7 @@ class Schermpje(wx.Frame):
         if HetZelfde != 6:
             self.db.setPrijzenlijst(prijzenlijst)
 
-    def gebruikersscherm(self, event):
+    def gebruikersscherm(self, event, tijd):
         """
         """
         self.db = BakkieControlDatabase()
@@ -212,9 +318,9 @@ class Schermpje(wx.Frame):
         self.Centre()
         self.boxje.Layout()
 
-        self.gebruikerspaneel.terug.Bind(wx.EVT_BUTTON, self.beheer)
+        self.gebruikerspaneel.terug.Bind(wx.EVT_BUTTON, lambda evt : self.beheer(evt, tijd))
         self.gebruikerspaneel.toe.Bind(wx.EVT_BUTTON, self.showPopUpToe)
-        self.gebruikerspaneel.ver.Bind(wx.wx.EVT_BUTTON, self.gebruikerVerwijderen)
+        self.gebruikerspaneel.ver.Bind(wx.EVT_BUTTON, self.gebruikerVerwijderen)
 
     def showPopUpToe(self, event):
         self.frameToe = PopUpFrameToe()
@@ -261,7 +367,7 @@ class Schermpje(wx.Frame):
     def closePopUpVer(self, event):
         self.frameVer.Close()
 
-    def logScherm(self, event):
+    def logScherm(self, event, tijd):
         self.db = BakkieControlDatabase()
         days, log = self.db.getLog()
         #print log
@@ -274,7 +380,7 @@ class Schermpje(wx.Frame):
         self.Centre()
         self.boxje.Layout()
 
-        self.logpaneel.terug.Bind(wx.EVT_BUTTON, self.beheer)
+        self.logpaneel.terug.Bind(wx.EVT_BUTTON, lambda evt : self.beheer(evt, tijd))
         self.logpaneel.CBDatum.Bind(wx.EVT_COMBOBOX, self.nieuweLog)
 
     def nieuweLog(self, event):
@@ -293,12 +399,11 @@ class Schermpje(wx.Frame):
                         self.logpaneel.list.SetStringItem(pos,1,str(a[1]))
                 except:
                     pass
-
+    
     def onStop(self, event):
-        """ Als onStop als event van een knop wordt gebonden sluit het
-        scherm.
+        """ 
         """
-        self.Close()
+        self.Destroy()
 
     
 
