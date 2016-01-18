@@ -28,7 +28,7 @@ class Prijzenlijstscherm(wx.Panel):
         titeltje = wx.StaticText(paneel, -1, "Prijzenlijst",
                                  pos=(10, 10), size=(295, -1),
                                  style=wx.ALIGN_LEFT)
-        titeltje.SetForegroundColour((255,191,0))
+        titeltje.SetForegroundColour((232,144,30))
         titeltje.SetFont(wx.Font(40, wx.DECORATIVE, wx.NORMAL, wx.NORMAL))
 
     def menubuttons(self, paneel):
