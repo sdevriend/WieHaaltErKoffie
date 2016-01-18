@@ -1,0 +1,4 @@
+INSERT INTO Prijzenlijst (product, prijs) VALUES ('Koffie', '1,02');
+INSERT INTO Prijzenlijst (product, prijs) VALUES ('Thee', '0,75');
+INSERT INTO Prijzenlijst (product, prijs) VALUES ('Cappuccino', '1,32');
+# HIER NOG DUMPS INGOOIEN!
