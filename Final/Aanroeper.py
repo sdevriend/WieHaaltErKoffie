@@ -31,7 +31,8 @@ class Schermpje(wx.Frame):
         wx.Frame.__init__(self, parent, id, 'Bakkie', style=wx.SYSTEM_MENU |
                           wx.CAPTION | wx.CLIP_CHILDREN, size=(1000, 750))
         self.boxje = wx.BoxSizer()
-        self.SetBackgroundColour((46,24,0))
+        #self.SetBackgroundColour((46,24,0))
+        self.SetBackgroundColour((92,48,0))
         self.welkom()
         self.SetSizer(self.boxje)
         self.Centre()
@@ -192,17 +193,16 @@ class Schermpje(wx.Frame):
     def SchuldSetpanel(self):
 	#Aanroepen schermen
         self.paneel = wx.Panel(self, -1)
-        self.Schuldpaneel = Schuldenscherm.Schuldenscherm1(self.paneel, -1, self.Gebruikers,
+        self.Schuldpaneel = Schuldenscherm.Schuldenscherm1(self, -1, self.Gebruikers,
                                                       self.schulden)
-        self.Vereffenpaneel = VereffenSchuld.VereffenScherm(self.paneel, -1, self.Gebruikers)
+        self.Vereffenpaneel = VereffenSchuld.VereffenScherm(self, -1, self.Gebruikers)
         self.frame = VereffenSchuld.PopUpFrameVereffend()
         
     def SchuldStartscherm(self):
-        #self.boxje = wx.BoxSizer(wx.VERTICAL)
         self.boxje.Add(self.Schuldpaneel, 1, wx.EXPAND | wx.ALL)
         self.boxje.Add(self.Vereffenpaneel, 1, wx.EXPAND | wx.ALL)
         self.Schuldpanelhide(self.Schuldpaneel, (750, 600))
-        self.paneel.SetSizer(self.boxje)
+        self.SetSizer(self.boxje)
         self.Centre()
         self.Show(True)
            
@@ -217,7 +217,7 @@ class Schermpje(wx.Frame):
         zie.Show()
         self.SetSize(bh)
         self.Centre()
-        self.Refresh()
+        self.Layout()
 
     def Schuldbuttonevents(self):
 	#Bindt de buttons
@@ -230,7 +230,7 @@ class Schermpje(wx.Frame):
 
     def SchuldTerugButton(self, event):
         #Code voor scherm terug vanaf schuldenscherm, moet naar menuscherm
-        "voer hier code in om terug te gaan naar het menuscherm"
+        self.Schuldpanelhide(self.menupaneel, (850, 550))
 
     def SchuldButton(self, event):
 	#Start het vereffenschuld scherm op
