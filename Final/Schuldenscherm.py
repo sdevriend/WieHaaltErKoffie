@@ -82,8 +82,9 @@ class Schuldenscherm1(wx.Panel):
         self.column=0
         self.table = wx.BoxSizer()
         if aantalrow == midden:
-            self.table.Add(wx.StaticText(self, -1, "Schuldeiser"), 2,
-                           wx.CENTRE | wx.ALL)
+            naampje = wx.StaticText(self, -1, "Schuldeiser")
+            naampje.SetForegroundColour((255,255,255))
+            self.table.Add(naampje, 2, wx.CENTRE | wx.ALL)
         else:
             self.table.Add(wx.Panel(self, -1), 2, wx.CENTRE | wx.ALL)
         for x in range(0, aantalcol+1):
@@ -92,8 +93,9 @@ class Schuldenscherm1(wx.Panel):
                     self.table.Add(wx.Panel(self, -1, style=wx.NO_BORDER), 1,
                                    wx.EXPAND | wx.ALL)
                 else:
-                    self.table.Add(wx.StaticText(self, -1, str(tekst[x-1]),
-                        style=wx.SIMPLE_BORDER), 1, wx.EXPAND | wx.ALL)
+                    naamtekst = wx.StaticText(self, -1, str(tekst[x-1]), style=wx.SIMPLE_BORDER)
+                    naamtekst.SetForegroundColour((255,255,255))
+                    self.table.Add(naamtekst, 1, wx.EXPAND | wx.ALL)
             else:                    
                 self.tablebox2(x, aantalcol, aantalrow, tekst)
         self.table.Add(wx.Panel(self, -1), 2, wx.EXPAND | wx.ALL)
@@ -102,8 +104,9 @@ class Schuldenscherm1(wx.Panel):
     def tablebox2(self, x, aantalcol, aantalrow, tekst):
         if x == 0:
            self.column +=1
-           self.table.Add(wx.StaticText(self, -1, str("\n"+tekst),
-                          style=wx.SIMPLE_BORDER), 1, wx.EXPAND | wx.ALL)
+           Atekst = wx.StaticText(self, -1, str("\n"+tekst), style=wx.SIMPLE_BORDER)
+           Atekst.SetForegroundColour((255,255,255))
+           self.table.Add(Atekst, 1, wx.EXPAND | wx.ALL)
         else:
            self.column += 1
            rowcolum=("("+str(self.column)+", "+str(aantalrow)+")")
@@ -112,10 +115,14 @@ class Schuldenscherm1(wx.Panel):
                                      style=wx.SIMPLE_BORDER)
                if str(self.omgevormd[rowcolum]) != "€0,00":
                    tekst.SetForegroundColour((191,0,0))
+               else:
+                   tekst.SetForegroundColour((255,255,255))
                self.table.Add(tekst, 1, wx.EXPAND | wx.ALL)
            except KeyError:
-               self.table.Add(wx.StaticText(self, -1, str("€0,00"),
-               style=wx.SIMPLE_BORDER), 1, wx.EXPAND | wx.ALL)
+               tekst2 = wx.StaticText(self, -1, "€0,00", 
+                                     style=wx.SIMPLE_BORDER)
+               tekst2.SetForegroundColour((255,255,255))
+               self.table.Add(tekst2, 1, wx.EXPAND | wx.ALL)
 
    
     def start(self, aantal):
@@ -125,7 +132,9 @@ class Schuldenscherm1(wx.Panel):
         """
         self.Schuldknop = wx.Button(self, -1, "Vereffen schuld")
         self.box = wx.BoxSizer(wx.VERTICAL)
-        self.box.Add(wx.StaticText(self, -1, "Schuldmaker"), 1, wx.CENTRE | wx.ALL)
+        header = wx.StaticText(self, -1, "Schuldmaker")
+        header.SetForegroundColour((255,255,255))
+        self.box.Add(header, 1, wx.CENTRE | wx.ALL)
         for x in range(0, aantal+1):
             if x == 0:
                 self.box.Add(self.tablebox(aantal, (x+1), self.namen, int((aantal+1)/2)),

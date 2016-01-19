@@ -30,8 +30,9 @@ class VereffenScherm(wx.Panel):
         self.box = wx.BoxSizer(wx.VERTICAL)
         self.Vereffenknop = wx.Button(self, -1, "Vereffen schuld!")
         self.box.Add(wx.Panel(self, -1), 3, wx.EXPAND | wx.ALL)
-        self.box.Add(wx.StaticText(self,-1, "\t\t         Schuldige:  \t\tSchuldeiser:"), 1,
-                     wx.EXPAND | wx.ALL)
+        tekst = wx.StaticText(self,-1, "\t\t         Schuldige:  \t\tSchuldeiser:")
+        tekst.SetForegroundColour((255,255,255))
+        self.box.Add(tekst, 1, wx.EXPAND | wx.ALL)
         self.box.Add(self.boxje, 1, wx.EXPAND, wx.ALL)
         self.box.Add(self.Vereffenknop, 1, wx.CENTRE)
         self.box.Add(wx.Panel(self, -1), 3, wx.EXPAND | wx.ALL)
