@@ -14,6 +14,7 @@ import Schuldenscherm
 import VereffenSchuld
 from BeheerScherm import Beheerscherm
 from PrijzenlijstScherm import Prijzenlijstscherm
+from StaticPrijzenlijstScherm import StaticPrijzenlijstscherm
 from GebruikersScherm import Gebruikersscherm
 from GebruikersScherm import PopUpFrameToe
 from GebruikersScherm import PopUpFrameVer
@@ -82,6 +83,7 @@ class Schermpje(wx.Frame):
     def naarMenu(self, event, tijd):
         """
         """
+        self.tijd = tijd
         try:
             self.drinken_1_paneel.Hide()
             self.bestelling_paneel.Hide()
@@ -137,6 +139,7 @@ class Schermpje(wx.Frame):
         self.Centre()
         self.boxje.Layout()
 
+        
     def naarBestelling(self, event, tijd):
         dezewillen = self.drinken_1_paneel.bestellers
         if len(dezewillen) > 0:
@@ -146,8 +149,13 @@ class Schermpje(wx.Frame):
                 self.drinken_1_paneel.Hide()
             except wx._core.PyAssertionError:
                 pass
+            try:
+                self.Staticprijzenlijstpaneel.Hide()
+            except AttributeError:
+                pass
             self.bestelling_paneel.Show()
             #self.drinken_1_paneel.drinken_halen_knop.Bind(wx.EVT_RADIOBUTTON, self.naam)
+            self.bestelling_paneel.prijzenkaart_knop.Bind(wx.EVT_BUTTON, self.naarStaticLijst)
             self.bestelling_paneel.doorgaan_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarPopUp(evt, tijd))
             self.bestelling_paneel.terug_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarIn_dr_ha_1(evt, tijd))
 
@@ -156,6 +164,20 @@ class Schermpje(wx.Frame):
             self.Centre()
             self.boxje.Layout()
 
+    def naarStaticLijst(self, event):
+        self.db = BakkieControlDatabase()
+        prijzen = self.db.getPrijzenlijst()
+        self.Staticprijzenlijstpaneel = StaticPrijzenlijstscherm(self, prijzen, self.tijd)
+        self.Staticprijzenlijstpaneel.terug.Bind(wx.EVT_BUTTON, lambda evt : self.naarBestelling(evt, self.tijd))
+        self.boxje.Add(self.Staticprijzenlijstpaneel, 1, wx.EXPAND | wx.ALL)
+        self.bestelling_paneel.Hide()
+        self.Staticprijzenlijstpaneel.Show()
+        self.SetSize((700, 440))
+        self.SetSizer(self.boxje)
+        self.Centre()
+        self.boxje.Layout()
+
+        
     def naarPopUp(self, event, tijd):
         self.frame1 = PopUpFrame()
         self.frame1.Show()
