@@ -179,9 +179,49 @@ class Schermpje(wx.Frame):
 
         
     def naarPopUp(self, event, tijd):
-        self.frame1 = PopUpFrame()
+        self.frame1 = PopUpFrame()        
+        for t in self.db.getUsers():
+                if str(self.bestelling_paneel.haler) in t:
+                    haalID = t[0]
+        aantal = len(self.bestelling_paneel.bestellers)
+        prijzen = self.db.getPrijzenlijst()
+        totale_lijst = []
+        for x in range(aantal):
+            bestellinglijst = []
+            product = ""
+            if x == 0:
+                product = self.bestelling_paneel.combobox_1.GetValue()
+            elif x == 1:
+                product = self.bestelling_paneel.combobox_2.GetValue()
+            elif x == 2:
+                product = self.bestelling_paneel.combobox_3.GetValue()
+            elif x == 3:
+                product = self.bestelling_paneel.combobox_4.GetValue()
+            elif x == 4:
+                product = self.bestelling_paneel.combobox_5.GetValue()
+            elif x == 5:
+                product = self.bestelling_paneel.combobox_6.GetValue()
+            elif x == 6:
+                product = self.bestelling_paneel.combobox_7.GetValue()
+            elif x == 7:
+                product = self.bestelling_paneel.combobox_8.GetValue()
+            elif x == 8:
+                product = self.bestelling_paneel.combobox_9.GetValue()
+            elif x == 9:
+                product = self.bestelling_paneel.combobox_10.GetValue()
+            for y in self.db.getUsers():
+                if str(self.bestelling_paneel.bestellers[x]) in y:
+                    persoonID = y[0]
+                    bestellinglijst.append(persoonID)
+            for z in self.db.getPrijzenlijst():
+                if product in z:
+                    productID = z[0]
+                    bestellinglijst.append(productID)
+            totale_lijst.append(bestellinglijst)
+        self.db.setBestelling(haalID, totale_lijst)
         self.frame1.Show()
         self.frame1.ok.Bind(wx.EVT_BUTTON, lambda evt : self.naarMenu(evt, tijd))
+
 
     def SchuldStartfunctie(self, event, tijd):
         users = self.db.getUsers()
