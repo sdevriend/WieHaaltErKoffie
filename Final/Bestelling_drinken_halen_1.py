@@ -21,38 +21,21 @@ class Be_dr_ha_1_scherm(wx.Panel):
         if tijd == "koffie":
             self.keuzes.remove("Bier")
             self.keuzes.remove("Wijn")
-        #print(prijzen)
         wx.Panel.__init__(self, parent, id)
         self.panelen()
-        #self.titelpaneel = wx.Panel(self, id)
-        #self.tekstpaneel = wx.Panel(self, id)
-        #self.tekstpaneel2 = wx.Panel(self, id)
         self.teksten()
-        self.functioneel()
+        self.functioneel2()
         middenbox = self.totaal()
         navigatiebox = self.navigatiebuttons()
         boxje = self.boxen(middenbox, navigatiebox)
         self.eindbox = wx.BoxSizer()
-        #self.SetBackgroundColour((255,255,20))
         self.eindbox.Add(boxje, 1, wx.EXPAND | wx.ALL)
         self.SetSizer(self.eindbox)
-        #self.paneel.SetBackgroundColour("Black")
 
     def panelen(self):
         self.titelpaneel = wx.Panel(self, -1)
         self.betaler = wx.Panel(self, -1)
         self.tekst = wx.Panel(self, -1)
-        
-        """self.naam1 = wx.Panel(self, -1)
-        self.naam2 = wx.Panel(self, -1)
-        self.naam3 = wx.Panel(self, -1)
-        self.naam4 = wx.Panel(self, -1)
-        self.naam5 = wx.Panel(self, -1)
-        self.naam6 = wx.Panel(self, -1)
-        self.naam7 = wx.Panel(self, -1)
-        self.naam8 = wx.Panel(self, -1)
-        self.naam9 = wx.Panel(self, -1)
-        self.naam10 = wx.Panel(self, -1)"""
 
     def teksten(self):
         """ 
@@ -62,8 +45,8 @@ class Be_dr_ha_1_scherm(wx.Panel):
                                  style=wx.ALIGN_CENTER)
         titeltje.SetForegroundColour((232,144,30))
         titeltje.SetFont(wx.Font(40, wx.DECORATIVE, wx.NORMAL, wx.NORMAL))
-        naam = random.choice(self.bestellers)
-        tekst1 = wx.StaticText(self.betaler, -1, str(naam) + " gaat drinken halen",
+        self.haler = random.choice(self.bestellers)
+        tekst1 = wx.StaticText(self.betaler, -1, str(self.haler) + " gaat drinken halen",
                                  pos=(5, 3))
         tekst1.SetForegroundColour((255,255,255))
         tekst1.SetFont(wx.Font(11, wx.DECORATIVE, wx.NORMAL, wx.NORMAL))
@@ -71,19 +54,128 @@ class Be_dr_ha_1_scherm(wx.Panel):
                                  pos=(5, 3), style=wx.ALIGN_CENTER)
         tekst2.SetForegroundColour((255,255,255))
         tekst2.SetFont(wx.Font(11, wx.DECORATIVE, wx.NORMAL, wx.BOLD))
-
+        
+        """
     def functioneel(self):
         positieteller = 2
         self.naambox = wx.BoxSizer(wx.VERTICAL)
+        self.totalecombo = []
         for x in self.bestellers:
             
             self.naampaneel = wx.Panel(self, -1)
             naamtekst = wx.StaticText(self.naampaneel, -1, x, pos=(2, positieteller))
             naamtekst.SetForegroundColour((255,255,255))
-            wx.ComboBox(self.naampaneel, -1, value="", pos=(102, positieteller),
+            self.combobox = wx.ComboBox(self.naampaneel, -1, value="", pos=(102, positieteller),
                               choices=self.keuzes, style=0)
+            self.totalecombo.append(self.combobox())
             self.naambox.Add(self.naampaneel)
             positieteller =+ 20
+        """
+
+    def functioneel2(self):
+        self.naambox = wx.BoxSizer(wx.VERTICAL)
+        self.totalecombo = []
+        try:
+            self.naampaneel_1 = wx.Panel(self, -1)
+            naamtekst_1 = wx.StaticText(self.naampaneel_1, -1, self.bestellers[0], pos=(2, 22))
+            naamtekst_1.SetForegroundColour((255,255,255))
+            self.combobox_1 = wx.ComboBox(self.naampaneel_1, -1, value="", pos=(102, 22),
+                              choices=self.keuzes, style=0)
+            #self.totalecombo.append(self.combobox())
+            self.naambox.Add(self.naampaneel_1)
+        except IndexError:
+            pass
+        try:
+            self.naampaneel_2 = wx.Panel(self, -1)
+            naamtekst_2 = wx.StaticText(self.naampaneel_2, -1, self.bestellers[1], pos=(2, 22))
+            naamtekst_2.SetForegroundColour((255,255,255))
+            self.combobox_2 = wx.ComboBox(self.naampaneel_2, -1, value="", pos=(102, 22),
+                              choices=self.keuzes, style=0)
+            #self.totalecombo.append(self.combobox())
+            self.naambox.Add(self.naampaneel_2)
+        except IndexError:
+            pass
+        try:
+            self.naampaneel_3 = wx.Panel(self, -1)
+            naamtekst_3 = wx.StaticText(self.naampaneel_3, -1, self.bestellers[2], pos=(2, 22))
+            naamtekst_3.SetForegroundColour((255,255,255))
+            self.combobox_3 = wx.ComboBox(self.naampaneel_3, -1, value="", pos=(102, 22),
+                              choices=self.keuzes, style=0)
+            #self.totalecombo.append(self.combobox())
+            self.naambox.Add(self.naampaneel_3)
+        except IndexError:
+            pass
+        try:
+            self.naampaneel_4 = wx.Panel(self, -1)
+            naamtekst_4 = wx.StaticText(self.naampaneel_4, -1, self.bestellers[3], pos=(2, 22))
+            naamtekst_4.SetForegroundColour((255,255,255))
+            self.combobox_4 = wx.ComboBox(self.naampaneel_4, -1, value="", pos=(102, 22),
+                              choices=self.keuzes, style=0)
+            #self.totalecombo.append(self.combobox())
+            self.naambox.Add(self.naampaneel_4)
+        except IndexError:
+            pass
+        try:
+            self.naampaneel_5 = wx.Panel(self, -1)
+            naamtekst_5 = wx.StaticText(self.naampaneel_5, -1, self.bestellers[4], pos=(2, 22))
+            naamtekst_5.SetForegroundColour((255,255,255))
+            self.combobox_5 = wx.ComboBox(self.naampaneel_5, -1, value="", pos=(102, 22),
+                              choices=self.keuzes, style=0)
+            #self.totalecombo.append(self.combobox())
+            self.naambox.Add(self.naampaneel_5)
+        except IndexError:
+            pass
+        try:
+            self.naampaneel_6 = wx.Panel(self, -1)
+            naamtekst_6 = wx.StaticText(self.naampaneel_6, -1, self.bestellers[5], pos=(2, 22))
+            naamtekst_6.SetForegroundColour((255,255,255))
+            self.combobox_6 = wx.ComboBox(self.naampaneel_6, -1, value="", pos=(102, 22),
+                              choices=self.keuzes, style=0)
+            #self.totalecombo.append(self.combobox())
+            self.naambox.Add(self.naampaneel_6)
+        except IndexError:
+            pass
+        try:
+            self.naampaneel_7 = wx.Panel(self, -1)
+            naamtekst_7 = wx.StaticText(self.naampaneel_7, -1, self.bestellers[6], pos=(2, 22))
+            naamtekst_7.SetForegroundColour((255,255,255))
+            self.combobox_7 = wx.ComboBox(self.naampaneel_7, -1, value="", pos=(102, 22),
+                              choices=self.keuzes, style=0)
+            #self.totalecombo.append(self.combobox())
+            self.naambox.Add(self.naampaneel_7)
+        except IndexError:
+            pass
+        try:
+            self.naampaneel_8 = wx.Panel(self, -1)
+            naamtekst_8 = wx.StaticText(self.naampaneel_8, -1, self.bestellers[7], pos=(2, 22))
+            naamtekst_8.SetForegroundColour((255,255,255))
+            self.combobox_8 = wx.ComboBox(self.naampaneel_8, -1, value="", pos=(102, 22),
+                              choices=self.keuzes, style=0)
+            #self.totalecombo.append(self.combobox())
+            self.naambox.Add(self.naampaneel_8)
+        except IndexError:
+            pass
+        try:
+            self.naampaneel_9 = wx.Panel(self, -1)
+            naamtekst_9 = wx.StaticText(self.naampaneel_9, -1, self.bestellers[8], pos=(2, 22))
+            naamtekst_9.SetForegroundColour((255,255,255))
+            self.combobox_9 = wx.ComboBox(self.naampaneel_9, -1, value="", pos=(102, 22),
+                              choices=self.keuzes, style=0)
+            #self.totalecombo.append(self.combobox())
+            self.naambox.Add(self.naampaneel_9)
+        except IndexError:
+            pass
+        try:
+            self.naampaneel_10 = wx.Panel(self, -1)
+            naamtekst_10 = wx.StaticText(self.naampaneel_10, -1, self.bestellers[9], pos=(2, 22))
+            naamtekst_10.SetForegroundColour((255,255,255))
+            self.combobox_10 = wx.ComboBox(self.naampaneel_10, -1, value="", pos=(102, 22),
+                              choices=self.keuzes, style=0)
+            #self.totalecombo.append(self.combobox())
+            self.naambox.Add(self.naampaneel_10)
+        except IndexError:
+            pass
+        
 
     def totaal(self):
         """ 
@@ -92,16 +184,6 @@ class Be_dr_ha_1_scherm(wx.Panel):
         totalebox.Add(self.betaler, 1, wx.EXPAND | wx.ALL)
         totalebox.Add(self.tekst, 1, wx.EXPAND | wx.ALL)
         totalebox.Add(self.naambox, 10, wx.EXPAND | wx.ALL)
-        """totalebox.Add(self.naam2, 1, wx.EXPAND | wx.ALL)
-        totalebox.Add(self.naam3, 1, wx.EXPAND | wx.ALL)
-        totalebox.Add(self.naam4, 1, wx.EXPAND | wx.ALL)
-        totalebox.Add(self.naam5, 1, wx.EXPAND | wx.ALL)
-        totalebox.Add(self.naam6, 1, wx.EXPAND | wx.ALL)
-        totalebox.Add(self.naam7, 1, wx.EXPAND | wx.ALL)
-        totalebox.Add(self.naam8, 1, wx.EXPAND | wx.ALL)
-        totalebox.Add(self.naam9, 1, wx.EXPAND | wx.ALL)
-        totalebox.Add(self.naam10, 1, wx.EXPAND | wx.ALL)"""
-        
         return totalebox
 
     def checker(self, event, getal):
