@@ -463,9 +463,15 @@ class Schermpje(wx.Frame):
         self.frameToe.Close()
 
     def gebruikerOpslaan(self, event):
+        toevoegen = True
+        self.db = BakkieControlDatabase()
+        users = self.db.getUsers()
         naam = self.frameToe.txtCtrlNaam.GetValue()
         index = self.gebruikerspaneel.LCGebruikers.GetItemCount()
-        if len(str(naam)) == 0 or len(str(naam)) > 10 or int(index) > 9:
+        for i in users:
+            if i[1] == naam:
+                toevoegen = False
+        if len(str(naam)) == 0 or len(str(naam)) > 10 or int(index) > 9 or toevoegen == False:
             pass
         else:
             self.gebruikerspaneel.LCGebruikers.InsertStringItem(index+1, naam)
