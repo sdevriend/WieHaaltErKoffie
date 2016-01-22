@@ -19,6 +19,6 @@ CREATE TABLE Bestelling (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 INSERT INTO Prijzenlijst (Product, Prijs) VALUES ('Koffie', '1.02');
 INSERT INTO Prijzenlijst (Product, Prijs) VALUES ('Thee', '0.75'); 
 INSERT INTO Prijzenlijst (Product, Prijs) VALUES ('Cappuccino', '1.32'); 
-INSERT INTO Prijzenlijst (Product, Prijs) VALUES ('Fris', '10.00'); 
+INSERT INTO Prijzenlijst (Product, Prijs) VALUES ('Fris', '1.23'); 
 INSERT INTO Prijzenlijst (Product, Prijs) VALUES ('Bier', '1.63'); 
 INSERT INTO Prijzenlijst (Product, Prijs) VALUES ('Wijn', '1.83');

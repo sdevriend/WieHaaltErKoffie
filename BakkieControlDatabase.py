@@ -60,7 +60,7 @@ class BakkieControlDatabase():
         Hier kan je de bestelling naartoe sturen in het volgende formaat.
         id: gebruiker die koffie gaat halen.
         lijst: lijst met bestellingen. Elke bestelling ziet er als volgt uit:
-        [userid, productid]
+        [[PersoonID, ProductID], [PersoonID, ProductID]]
         
         queries voor Jesse:
         db.getFrequenties()
@@ -176,9 +176,11 @@ class BakkieControlDatabase():
         voltooid.
         """
         self.cursor.execute('SELECT * FROM Gebruiker')
-        testusers = ["Sebastiaan", "Jesse", "Dwin", "Jolanda", "Jeroen"]
+        testusers = ["Sebastiaan", "Jesse", "Dwin", "Jolanda", "Jeroen", "Joost", "Henk", "Klaas"]
         if len(self.cursor.fetchall()) == 0:
             map(self.addUser, testusers)
+            self.setBestelling(1, [[2, 3]])
+            self.setBestelling(2, [[1, 3],[1, 3]] )
             #sqlfile = open("testdata.txt")
             #sql = sqlfile.read()
             #self.cursor.executescript(sql)
@@ -263,10 +265,9 @@ class BakkieControlDatabase():
         oudPrijs = self.getPrijzenlijst()
         for nPrijs, oudPrijs in zip(newPrijs, oudPrijs):
             if str(nPrijs) != str(oudPrijs):
-                self.cursor.execute('UPDATE Prijzenlijst SET Prijs = ? WHERE ID = ?;', (nPrijs[2], nPrijs[0],))
-                self.connection.commit()
-                bericht = "De prijs voor " + nPrijs[1] + " is veranderd van: " + str(oudPrijs[2]) + " naar: " + str(nPrijs[2])
-                self.__writelog(bericht)
+                if nPrijs[2] >= 0.50 and nPrijs[2] <= 5.00:
+                    self.cursor.execute('UPDATE Prijzenlijst SET Prijs = ? WHERE ID = ?;', (nPrijs[2], nPrijs[0],))
+                    self.connection.commit()
         
     def setBestelling(self, HaalID, Bestellingen):
         """

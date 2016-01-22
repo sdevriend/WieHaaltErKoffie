@@ -2,7 +2,7 @@ from BakkieControlDatabase import BakkieControlDatabase
 
 a = BakkieControlDatabase(True, True)
 
-
+"""
 print "Doe hier je acties"
 print "Voeg klaas toe."
 a.addUser("Klaas")
@@ -42,4 +42,11 @@ print "Sebsatiaan 'lost' de schulden in bij Jesse."
 a.setSchulden(2, 1, 6.00)
 print "Sluit daarna de db"
 a.getLog()
+"""
+prijzen = a.getPrijzenlijst()
+print prijzen
+prijzen[0][2] = 5.65
+prijzen[1][2] = 3.44
+print prijzen
+a.setPrijzenlijst(prijzen)
 a.close()
