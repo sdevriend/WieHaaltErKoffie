@@ -134,7 +134,7 @@ class Schermpje(wx.Frame):
         self.drinken_1_paneel.random_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarBestelling(evt, tijd))
         self.drinken_1_paneel.hoogste_s_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarBestelling(evt, tijd))
         
-        self.SetSize((950, 750))
+        self.SetSize((1050, 850))
         self.SetSizer(self.boxje)
         self.Centre()
         self.boxje.Layout()
