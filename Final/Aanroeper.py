@@ -42,7 +42,7 @@ class Schermpje(wx.Frame):
     def welkom(self):
         """ 
         """
-        self.db = BakkieControlDatabase()
+        self.db = BakkieControlDatabase(True, True)
         self.prijzen = self.db.getPrijzenlijst()
         self.users = self.db.getUsers()
         
