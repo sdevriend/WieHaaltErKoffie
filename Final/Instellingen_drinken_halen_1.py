@@ -5,8 +5,6 @@ Jeroen Kuivenhoven      s1084216
 
 import wx
 
-hoogsteschulden = 'Jolanda'
-
 
 class In_dr_ha_1_scherm(wx.Panel):
     def __init__(self, parent, id, gebruikers):
@@ -171,11 +169,11 @@ class In_dr_ha_1_scherm(wx.Panel):
         """
         """
         self.terug_knop = wx.Button(self, -1, ("Terug"))
-        self.stop_knop = wx.Button(self, -1, ("Stoppen"))
+        #self.stop_knop = wx.Button(self, -1, ("Stoppen"))
         navigatiebox = wx.BoxSizer(wx.HORIZONTAL)
         navigatiebox.Add(self.terug_knop, 1, wx.EXPAND | wx.ALL)
-        navigatiebox.Add((wx.Panel(self, -1)), 2, wx.EXPAND | wx.ALL)
-        navigatiebox.Add(self.stop_knop, 1, wx.EXPAND | wx.ALL)
+        navigatiebox.Add((wx.Panel(self, -1)), 3, wx.EXPAND | wx.ALL)
+        #navigatiebox.Add(self.stop_knop, 1, wx.EXPAND | wx.ALL)
         return navigatiebox
 
     def boxen(self, paneel, box1, box2):
