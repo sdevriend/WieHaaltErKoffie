@@ -181,6 +181,11 @@ class BakkieControlDatabase():
             map(self.addUser, testusers)
             self.setBestelling(1, [[2, 3]])
             self.setBestelling(2, [[1, 3],[1, 3]] )
+            tijd = int(time.time())
+            for x in range(1, 8):
+                tijd -= 86400
+                self.cursor.execute('INSERT INTO Log (Datum, Bericht) VALUES(?, "PLACEHOLDER")', (tijd, ))
+                self.connection.commit()
             #sqlfile = open("testdata.txt")
             #sql = sqlfile.read()
             #self.cursor.executescript(sql)
