@@ -134,7 +134,7 @@ class Schermpje(wx.Frame):
         self.drinken_1_paneel.random_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarBestelling(evt, tijd))
         self.drinken_1_paneel.hoogste_s_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarBestelling(evt, tijd))
         
-        self.SetSize((950, 550))
+        self.SetSize((1050, 850))
         self.SetSizer(self.boxje)
         self.Centre()
         self.boxje.Layout()
@@ -159,7 +159,7 @@ class Schermpje(wx.Frame):
             self.bestelling_paneel.doorgaan_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarPopUp(evt, tijd))
             self.bestelling_paneel.terug_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarIn_dr_ha_1(evt, tijd))
 
-            self.SetSize((800, 700))
+            self.SetSize((780, 800))
             self.SetSizer(self.boxje)
             self.Centre()
             self.boxje.Layout()
