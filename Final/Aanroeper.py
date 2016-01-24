@@ -129,7 +129,7 @@ class Schermpje(wx.Frame):
         #self.drinken_1_paneel.Update()
         self.drinken_1_paneel.Show()
         #self.drinken_1_paneel.drinken_halen_knop.Bind(wx.EVT_RADIOBUTTON, self.naam)
-        self.drinken_1_paneel.stop_knop.Bind(wx.EVT_BUTTON, self.onStop)
+        #self.drinken_1_paneel.stop_knop.Bind(wx.EVT_BUTTON, self.onStop)
         self.drinken_1_paneel.terug_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarMenu(evt, tijd))
         self.drinken_1_paneel.random_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarBestelling(evt, tijd))
         self.drinken_1_paneel.hoogste_s_knop.Bind(wx.EVT_BUTTON, lambda evt : self.naarBestelling(evt, tijd))
